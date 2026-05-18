@@ -269,28 +269,56 @@
   <ul id="task-list"></ul>
 </div>
 
-<script>
-  const STORAGE_KEY = "todo-tasks-v1";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDcujwB_PmE33L4PZZJwobJQc-7zTvc0zk",
+    authDomain: "todo-app-3ccea.firebaseapp.com",
+    projectId: "todo-app-3ccea",
+    storageBucket: "todo-app-3ccea.firebasestorage.app",
+    messagingSenderId: "352088559245",
+    appId: "1:352088559245:web:84c4fe55d7ea16eedddcc4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const tasksCol = collection(db, "tasks");
+
   const form = document.getElementById("form");
   const input = document.getElementById("task-input");
   const list = document.getElementById("task-list");
   const counter = document.getElementById("counter");
   const filterBtns = document.querySelectorAll(".filter-btn");
 
-  let tasks = loadTasks();
+  let tasks = [];
   let filter = "all";
+  let loaded = false;
 
-  function loadTasks() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveTasks() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  }
+  const q = query(tasksCol, orderBy("createdAt", "desc"));
+  onSnapshot(q, snapshot => {
+    tasks = snapshot.docs.map(d => {
+      const data = d.data();
+      return { id: d.id, text: data.text, done: !!data.done };
+    });
+    loaded = true;
+    render();
+  }, err => {
+    console.error("Firestore listen error:", err);
+    counter.textContent = "接続エラー: " + err.message;
+  });
 
   function render() {
     const filtered = tasks.filter(t => {
@@ -304,7 +332,8 @@
     if (filtered.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty";
-      const msg = filter === "done" ? "完了したタスクはありません"
+      const msg = !loaded ? "読み込み中..."
+                : filter === "done" ? "完了したタスクはありません"
                 : filter === "active" ? "未完了のタスクはありません"
                 : "タスクを追加してみましょう";
       empty.innerHTML = `<div class="icon">📝</div>${msg}`;
@@ -319,7 +348,7 @@
         checkbox.className = "checkbox";
         checkbox.setAttribute("role", "checkbox");
         checkbox.setAttribute("aria-checked", task.done);
-        checkbox.addEventListener("click", () => toggleTask(task.id));
+        checkbox.addEventListener("click", () => toggleTask(task.id, task.done));
 
         const text = document.createElement("div");
         text.className = "task-text";
@@ -343,38 +372,44 @@
     const total = tasks.length;
     const remaining = tasks.filter(t => !t.done).length;
     if (total === 0) {
-      counter.textContent = "タスクはまだありません";
+      counter.textContent = loaded ? "タスクはまだありません" : "読み込み中...";
     } else {
       counter.textContent = `残り ${remaining} 件 / 全 ${total} 件`;
     }
   }
 
-  function addTask(text) {
+  async function addTask(text) {
     const trimmed = text.trim();
     if (!trimmed) return;
-    tasks.unshift({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      text: trimmed,
-      done: false
-    });
-    saveTasks();
-    render();
+    try {
+      await addDoc(tasksCol, {
+        text: trimmed,
+        done: false,
+        createdAt: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("追加エラー:", err);
+      alert("タスクの追加に失敗しました: " + err.message);
+    }
   }
 
-  function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
-    if (!task) return;
-    task.done = !task.done;
-    saveTasks();
-    render();
+  async function toggleTask(id, currentDone) {
+    try {
+      await updateDoc(doc(db, "tasks", id), { done: !currentDone });
+    } catch (err) {
+      console.error("更新エラー:", err);
+    }
   }
 
   function deleteTask(id, el) {
     el.classList.add("removing");
-    setTimeout(() => {
-      tasks = tasks.filter(t => t.id !== id);
-      saveTasks();
-      render();
+    setTimeout(async () => {
+      try {
+        await deleteDoc(doc(db, "tasks", id));
+      } catch (err) {
+        console.error("削除エラー:", err);
+        el.classList.remove("removing");
+      }
     }, 180);
   }
 
