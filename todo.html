@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4f46e5">
+<title>ToDoリスト</title>
+<style>
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #8b5cf6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text);
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .app {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    color: #fff;
+    padding: 28px 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .header-icon {
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  }
+
+  .counter {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.95;
+  }
+
+  #form {
+    margin-top: 20px;
+  }
+
+  .input-area {
+    display: flex;
+    gap: 10px;
+  }
+
+  #task-input {
+    flex: 1;
+    height: 56px;
+    padding: 0 18px;
+    font-size: 17px;
+    font-weight: 500;
+    border: none;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.97);
+    color: var(--text);
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s, transform 0.1s;
+  }
+
+  #task-input::placeholder {
+    color: #94a3b8;
+  }
+
+  #task-input:focus {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  #add-btn {
+    height: 56px;
+    min-width: 56px;
+    padding: 0;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    border: none;
+    border-radius: 16px;
+    background: #fff;
+    color: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #add-btn:active {
+    transform: scale(0.92);
+    background: #e0e7ff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #due-date-input {
+    margin-top: 10px;
+    width: 100%;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s;
+  }
+
+  #due-date-input:focus {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35);
+  }
+
+  .filters {
+    display: flex;
+    gap: 6px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .filter-btn {
+    flex: 1;
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: #fff;
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+
+  .filter-btn:active {
+    transform: scale(0.96);
+  }
+
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
+
+  #task-list {
+    list-style: none;
+    flex: 1;
+    padding: 10px 14px 32px;
+    overflow-y: auto;
+  }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 14px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    animation: slideIn 0.25s ease-out;
+    transition: box-shadow 0.2s, transform 0.1s;
+  }
+
+  .task:active {
+    box-shadow: var(--shadow-md);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .task.removing {
+    animation: slideOut 0.25s ease-in forwards;
+  }
+
+  @keyframes slideOut {
+    to { opacity: 0; transform: translateX(60px); height: 0; padding: 0; margin: 0; }
+  }
+
+  .checkbox {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    margin-top: 2px;
+    border: 2.5px solid #cbd5e1;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  }
+
+  .checkbox:active {
+    transform: scale(0.88);
+  }
+
+  .task.done .checkbox {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  .checkbox::after {
+    content: "";
+    width: 14px;
+    height: 7px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg) translate(1px, -2px) scale(0.5);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .task.done .checkbox::after {
+    opacity: 1;
+    transform: rotate(-45deg) translate(1px, -2px) scale(1);
+  }
+
+  .task-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding-top: 2px;
+  }
+
+  .task-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-word;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+
+  .task.done .task-text {
+    color: #94a3b8;
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .due-badge {
+    align-self: flex-start;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .task.overdue {
+    background: #fef2f2;
+    border-left: 4px solid var(--danger);
+    padding-left: 10px;
+  }
+  .task.overdue .due-badge {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .task.due-today {
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    padding-left: 10px;
+  }
+  .task.due-today .due-badge {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+
+  .task.due-soon {
+    background: #fefce8;
+    border-left: 4px solid #eab308;
+    padding-left: 10px;
+  }
+  .task.due-soon .due-badge {
+    background: #fef9c3;
+    color: #a16207;
+  }
+
+  .task.done.overdue,
+  .task.done.due-today,
+  .task.done.due-soon {
+    background: var(--surface);
+    border-left: none;
+    padding-left: 14px;
+  }
+  .task.done .due-badge {
+    background: #f1f5f9;
+    color: #94a3b8;
+    text-decoration: line-through;
+  }
+
+  .delete-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--danger);
+    font-size: 24px;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: -4px;
+  }
+
+  .delete-btn:active {
+    background: #fee2e2;
+    transform: scale(0.9);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 64px 20px;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .empty .icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  @media (min-width: 521px) {
+    .app {
+      min-height: auto;
+      margin-top: 32px;
+      margin-bottom: 32px;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+  }
+
+  @media (max-width: 380px) {
+    header h1 { font-size: 24px; }
+    .header-icon { font-size: 24px; }
+    #task-input { font-size: 16px; padding: 0 16px; }
+    .task-text { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-top">
+      <span class="header-icon">✓</span>
+      <h1>ToDoリスト</h1>
+    </div>
+    <div class="counter" id="counter">タスクはまだありません</div>
+    <form id="form">
+      <div class="input-area">
+        <input type="text" id="task-input" placeholder="新しいタスクを入力..." autocomplete="off" maxlength="200">
+        <button type="submit" id="add-btn" aria-label="追加">+</button>
+      </div>
+      <input type="date" id="due-date-input" aria-label="期限日（任意）">
+    </form>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">すべて</button>
+    <button class="filter-btn" data-filter="active">未完了</button>
+    <button class="filter-btn" data-filter="done">完了</button>
+  </div>
+
+  <ul id="task-list"></ul>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDcujwB_PmE33L4PZZJwobJQc-7zTvc0zk",
+    authDomain: "todo-app-3ccea.firebaseapp.com",
+    projectId: "todo-app-3ccea",
+    storageBucket: "todo-app-3ccea.firebasestorage.app",
+    messagingSenderId: "352088559245",
+    appId: "1:352088559245:web:84c4fe55d7ea16eedddcc4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const tasksCol = collection(db, "tasks");
+
+  const form = document.getElementById("form");
+  const input = document.getElementById("task-input");
+  const dueDateInput = document.getElementById("due-date-input");
+  const list = document.getElementById("task-list");
+  const counter = document.getElementById("counter");
+  const filterBtns = document.querySelectorAll(".filter-btn");
+
+  let tasks = [];
+  let filter = "all";
+  let loaded = false;
+
+  const q = query(tasksCol, orderBy("createdAt", "desc"));
+  onSnapshot(q, snapshot => {
+    tasks = snapshot.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        text: data.text,
+        done: !!data.done,
+        dueDate: data.dueDate || null
+      };
+    });
+    loaded = true;
+    render();
+  }, err => {
+    console.error("Firestore listen error:", err);
+    counter.textContent = "接続エラー: " + err.message;
+  });
+
+  function getUrgency(dueDate) {
+    if (!dueDate) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate + "T00:00:00");
+    if (isNaN(due)) return null;
+    const diffDays = Math.floor((due - today) / 86400000);
+    if (diffDays < 0) return { cls: "overdue", diff: diffDays };
+    if (diffDays === 0) return { cls: "due-today", diff: 0 };
+    if (diffDays <= 3) return { cls: "due-soon", diff: diffDays };
+    return { cls: "", diff: diffDays };
+  }
+
+  function formatDueLabel(dueDate) {
+    if (!dueDate) return "";
+    const due = new Date(dueDate + "T00:00:00");
+    if (isNaN(due)) return "";
+    const dateStr = `${due.getMonth() + 1}/${due.getDate()}`;
+    const u = getUrgency(dueDate);
+    if (!u) return `📅 ${dateStr}`;
+    if (u.diff < 0) return `⚠️ ${dateStr} (${-u.diff}日超過)`;
+    if (u.diff === 0) return `⏰ ${dateStr} (今日)`;
+    if (u.diff === 1) return `📅 ${dateStr} (明日)`;
+    if (u.diff <= 7) return `📅 ${dateStr} (あと${u.diff}日)`;
+    return `📅 ${dateStr}`;
+  }
+
+  function render() {
+    const filtered = tasks.filter(t => {
+      if (filter === "active") return !t.done;
+      if (filter === "done") return t.done;
+      return true;
+    });
+
+    list.innerHTML = "";
+
+    if (filtered.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      const msg = !loaded ? "読み込み中..."
+                : filter === "done" ? "完了したタスクはありません"
+                : filter === "active" ? "未完了のタスクはありません"
+                : "タスクを追加してみましょう";
+      empty.innerHTML = `<div class="icon">📝</div>${msg}`;
+      list.appendChild(empty);
+    } else {
+      filtered.forEach(task => {
+        const li = document.createElement("li");
+        const urgency = getUrgency(task.dueDate);
+        const urgencyCls = !task.done && urgency && urgency.cls ? " " + urgency.cls : "";
+        li.className = "task" + (task.done ? " done" : "") + urgencyCls;
+        li.dataset.id = task.id;
+
+        const checkbox = document.createElement("div");
+        checkbox.className = "checkbox";
+        checkbox.setAttribute("role", "checkbox");
+        checkbox.setAttribute("aria-checked", task.done);
+        checkbox.addEventListener("click", () => toggleTask(task.id, task.done));
+
+        const main = document.createElement("div");
+        main.className = "task-main";
+
+        const text = document.createElement("div");
+        text.className = "task-text";
+        text.textContent = task.text;
+        main.appendChild(text);
+
+        if (task.dueDate) {
+          const badge = document.createElement("span");
+          badge.className = "due-badge";
+          badge.textContent = formatDueLabel(task.dueDate);
+          main.appendChild(badge);
+        }
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.setAttribute("aria-label", "削除");
+        delBtn.textContent = "×";
+        delBtn.addEventListener("click", () => deleteTask(task.id, li));
+
+        li.append(checkbox, main, delBtn);
+        list.appendChild(li);
+      });
+    }
+
+    updateCounter();
+  }
+
+  function updateCounter() {
+    const total = tasks.length;
+    const remaining = tasks.filter(t => !t.done).length;
+    const overdue = tasks.filter(t => {
+      if (t.done) return false;
+      const u = getUrgency(t.dueDate);
+      return u && u.cls === "overdue";
+    }).length;
+    if (total === 0) {
+      counter.textContent = loaded ? "タスクはまだありません" : "読み込み中...";
+    } else {
+      let msg = `残り ${remaining} 件 / 全 ${total} 件`;
+      if (overdue > 0) msg += ` ⚠️ 期限超過 ${overdue} 件`;
+      counter.textContent = msg;
+    }
+  }
+
+  async function addTask(text, dueDate) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    try {
+      await addDoc(tasksCol, {
+        text: trimmed,
+        done: false,
+        dueDate: dueDate || null,
+        createdAt: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("追加エラー:", err);
+      alert("タスクの追加に失敗しました: " + err.message);
+    }
+  }
+
+  async function toggleTask(id, currentDone) {
+    try {
+      await updateDoc(doc(db, "tasks", id), { done: !currentDone });
+    } catch (err) {
+      console.error("更新エラー:", err);
+    }
+  }
+
+  function deleteTask(id, el) {
+    el.classList.add("removing");
+    setTimeout(async () => {
+      try {
+        await deleteDoc(doc(db, "tasks", id));
+      } catch (err) {
+        console.error("削除エラー:", err);
+        el.classList.remove("removing");
+      }
+    }, 180);
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    addTask(input.value, dueDateInput.value);
+    input.value = "";
+    dueDateInput.value = "";
+    input.focus();
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  render();
+</script>
+</body>
+</html>
