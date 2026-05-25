@@ -519,14 +519,181 @@
     #task-input { font-size: 16px; padding: 0 16px; }
     .task-text { font-size: 16px; }
   }
+
+  .hidden { display: none !important; }
+
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 200;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 44px 28px 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    text-align: center;
+  }
+
+  .login-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 22px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.4);
+  }
+
+  .login-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+
+  .login-subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  .google-btn {
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .google-btn:active {
+    transform: scale(0.97);
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .google-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .google-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .login-error {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    text-align: left;
+  }
+
+  .title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.2);
+    object-fit: cover;
+  }
+
+  .logout-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 18px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logout-btn:active {
+    background: rgba(255, 255, 255, 0.32);
+    transform: scale(0.9);
+  }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="login-screen hidden" id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">✓</div>
+    <h1 class="login-title">ToDoリスト</h1>
+    <p class="login-subtitle">タスクを管理するために<br>Googleアカウントでログインしてください</p>
+    <button class="google-btn" id="google-btn">
+      <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+        <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/>
+        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+        <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+      </svg>
+      Googleでログイン
+    </button>
+    <div class="login-error hidden" id="login-error"></div>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
   <header>
     <div class="header-top">
-      <span class="header-icon">✓</span>
-      <h1>ToDoリスト</h1>
+      <div class="title-group">
+        <span class="header-icon">✓</span>
+        <h1>ToDoリスト</h1>
+      </div>
+      <div class="user-menu">
+        <img class="user-avatar" id="user-avatar" alt="">
+        <button class="logout-btn" id="logout-btn" aria-label="ログアウト" title="ログアウト">⎋</button>
+      </div>
     </div>
     <div class="counter" id="counter">タスクはまだありません</div>
   </header>
@@ -540,7 +707,7 @@
   <ul id="task-list"></ul>
 </div>
 
-<button class="fab" id="fab" aria-label="タスクを追加">+</button>
+<button class="fab hidden" id="fab" aria-label="タスクを追加">+</button>
 
 <div class="modal-backdrop" id="modal-backdrop"></div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
@@ -575,9 +742,17 @@
     doc,
     onSnapshot,
     query,
+    where,
     orderBy,
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDcujwB_PmE33L4PZZJwobJQc-7zTvc0zk",
@@ -588,10 +763,18 @@
     appId: "1:352088559245:web:84c4fe55d7ea16eedddcc4"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+  const auth = getAuth(firebaseApp);
+  const provider = new GoogleAuthProvider();
   const tasksCol = collection(db, "tasks");
 
+  const appEl = document.getElementById("app");
+  const loginScreen = document.getElementById("login-screen");
+  const loginError = document.getElementById("login-error");
+  const googleBtn = document.getElementById("google-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const userAvatar = document.getElementById("user-avatar");
   const modalForm = document.getElementById("modal-form");
   const input = document.getElementById("task-input");
   const dueDateInput = document.getElementById("due-date-input");
@@ -606,23 +789,95 @@
   let tasks = [];
   let filter = "all";
   let loaded = false;
+  let currentUser = null;
+  let unsubscribeTasks = null;
 
-  const q = query(tasksCol, orderBy("createdAt", "desc"));
-  onSnapshot(q, snapshot => {
-    tasks = snapshot.docs.map(d => {
-      const data = d.data();
-      return {
-        id: d.id,
-        text: data.text,
-        done: !!data.done,
-        dueDate: data.dueDate || null
-      };
-    });
-    loaded = true;
+  function subscribeTasks(uid) {
+    if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+    loaded = false;
+    tasks = [];
     render();
-  }, err => {
-    console.error("Firestore listen error:", err);
-    counter.textContent = "接続エラー: " + err.message;
+    const q = query(tasksCol, where("userId", "==", uid), orderBy("createdAt", "desc"));
+    unsubscribeTasks = onSnapshot(q, snapshot => {
+      tasks = snapshot.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          text: data.text,
+          done: !!data.done,
+          dueDate: data.dueDate || null
+        };
+      });
+      loaded = true;
+      render();
+    }, err => {
+      console.error("Firestore listen error:", err);
+      counter.textContent = "接続エラー: " + err.message;
+    });
+  }
+
+  function showLogin(errorMsg) {
+    loginScreen.classList.remove("hidden");
+    appEl.classList.add("hidden");
+    fab.classList.add("hidden");
+    if (errorMsg) {
+      loginError.textContent = errorMsg;
+      loginError.classList.remove("hidden");
+    } else {
+      loginError.classList.add("hidden");
+    }
+  }
+
+  function showApp(user) {
+    loginScreen.classList.add("hidden");
+    appEl.classList.remove("hidden");
+    fab.classList.remove("hidden");
+    if (user.photoURL) {
+      userAvatar.src = user.photoURL;
+      userAvatar.style.display = "";
+    } else {
+      userAvatar.style.display = "none";
+    }
+    userAvatar.alt = user.displayName || "";
+  }
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      currentUser = user;
+      showApp(user);
+      subscribeTasks(user.uid);
+    } else {
+      currentUser = null;
+      if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+      tasks = [];
+      loaded = false;
+      showLogin();
+    }
+  });
+
+  googleBtn.addEventListener("click", async () => {
+    googleBtn.disabled = true;
+    loginError.classList.add("hidden");
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error("ログインエラー:", err);
+      if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
+        loginError.textContent = "ログインに失敗しました: " + (err.message || err.code);
+        loginError.classList.remove("hidden");
+      }
+    } finally {
+      googleBtn.disabled = false;
+    }
+  });
+
+  logoutBtn.addEventListener("click", async () => {
+    if (!confirm("ログアウトしますか？")) return;
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error("ログアウトエラー:", err);
+    }
   });
 
   function getUrgency(dueDate) {
@@ -733,11 +988,16 @@
   async function addTask(text, dueDate) {
     const trimmed = text.trim();
     if (!trimmed) return;
+    if (!currentUser) {
+      alert("ログインが必要です");
+      return;
+    }
     try {
       await addDoc(tasksCol, {
         text: trimmed,
         done: false,
         dueDate: dueDate || null,
+        userId: currentUser.uid,
         createdAt: serverTimestamp()
       });
     } catch (err) {
