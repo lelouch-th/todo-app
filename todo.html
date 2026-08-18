@@ -152,13 +152,26 @@
     font-family: inherit;
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
-  #task-input::placeholder, #edit-task-input::placeholder,
-  #category-input::placeholder, #edit-category-input::placeholder { color: #94a3b8; }
+  #task-input::placeholder, #edit-task-input::placeholder { color: #94a3b8; }
   #task-input:focus, #due-date-input:focus, #edit-task-input:focus, #edit-due-date-input:focus,
   #category-input:focus, #edit-category-input:focus, #share-list-name:focus {
     border-color: var(--primary);
     background: #fff;
     box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+  }
+
+  /* Category select (dropdown) */
+  #category-input, #edit-category-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #f8fafc;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 18px;
+    padding-right: 44px;
+    cursor: pointer;
   }
 
   /* Priority selector */
@@ -704,7 +717,7 @@
     </div>
     <label class="field">
       <span class="field-label">カテゴリ（任意）</span>
-      <input type="text" id="category-input" placeholder="仕事・個人・買い物 など" maxlength="30">
+      <select id="category-input"></select>
     </label>
     <div class="modal-actions">
       <button type="button" class="btn btn-secondary" id="modal-cancel">キャンセル</button>
@@ -740,7 +753,7 @@
     </div>
     <label class="field">
       <span class="field-label">カテゴリ（任意）</span>
-      <input type="text" id="edit-category-input" placeholder="仕事・個人・買い物 など" maxlength="30">
+      <select id="edit-category-input"></select>
     </label>
     <div class="modal-actions">
       <button type="button" class="btn btn-secondary" id="edit-cancel">キャンセル</button>
@@ -883,6 +896,48 @@
 
   setupPriorityGroup(document.getElementById("priority-group"));
   setupPriorityGroup(editPriorityGroup);
+
+  // ===== CATEGORY SELECT =====
+  const CATEGORY_OPTIONS = [
+    { value: "個人",   label: "個人 — 自分のこと全般" },
+    { value: "家事",   label: "家事 — 掃除・洗濯・料理" },
+    { value: "買い物", label: "買い物 — 日用品・食材・ネット注文" },
+    { value: "勉強",   label: "勉強 — 資格・読書・学習" },
+    { value: "健康",   label: "健康 — 運動・通院・薬" },
+    { value: "その他", label: "その他 — 分類しにくいもの" },
+  ];
+  const CATEGORY_VALUES = CATEGORY_OPTIONS.map(c => c.value);
+
+  // Builds the dropdown options. If currentValue is a legacy free-text
+  // category that isn't one of the fixed choices, it's added as an extra
+  // option so the existing task's category isn't silently lost/changed.
+  function populateCategorySelect(selectEl, currentValue) {
+    selectEl.innerHTML = "";
+
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "選択しない";
+    selectEl.appendChild(blank);
+
+    if (currentValue && !CATEGORY_VALUES.includes(currentValue)) {
+      const legacy = document.createElement("option");
+      legacy.value = currentValue;
+      legacy.textContent = `${currentValue}（従来のカテゴリ）`;
+      selectEl.appendChild(legacy);
+    }
+
+    CATEGORY_OPTIONS.forEach(opt => {
+      const o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = opt.label;
+      selectEl.appendChild(o);
+    });
+
+    selectEl.value = currentValue || "";
+  }
+
+  populateCategorySelect(catInput, "");
+  populateCategorySelect(editCatInput, "");
 
   // ===== AUTH =====
   function showLogin(errorMsg) {
@@ -1406,7 +1461,7 @@
     modal.setAttribute("aria-hidden", "true");
     input.value = "";
     dueDateInput.value = "";
-    catInput.value = "";
+    populateCategorySelect(catInput, "");
     setSelectedPriority(document.getElementById("priority-group"), "mid");
     if (document.activeElement) document.activeElement.blur();
   }
@@ -1428,7 +1483,7 @@
     editTaskId.value = task.id;
     editTaskInput.value = task.text;
     editDueDateInput.value = task.dueDate || "";
-    editCatInput.value = task.category || "";
+    populateCategorySelect(editCatInput, task.category || "");
     setSelectedPriority(editPriorityGroup, task.priority || "mid");
     editModal.classList.add("open");
     editBackdrop.classList.add("open");
