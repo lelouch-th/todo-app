@@ -552,6 +552,7 @@
     padding: 0 16px 10px;
   }
   .sort-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+  #list-bar { padding-top: 14px; }
   .sort-select {
     flex: 1; height: 34px; padding: 0 10px;
     border: 1.5px solid var(--border); border-radius: 10px;
@@ -666,6 +667,10 @@
   </div>
 
   <div class="filter-area">
+    <div class="sort-bar" id="list-bar">
+      <span class="sort-label">表示中のリスト:</span>
+      <select class="sort-select" id="list-select"></select>
+    </div>
     <div class="filters">
       <button class="filter-btn active" data-filter="all">すべて</button>
       <button class="filter-btn" data-filter="active">未完了</button>
@@ -837,6 +842,7 @@
   const modalCancel   = document.getElementById("modal-cancel");
   const catFilters    = document.getElementById("category-filters");
   const sortSelect    = document.getElementById("sort-select");
+  const listSelect    = document.getElementById("list-select");
 
   // Edit modal
   const editBackdrop    = document.getElementById("edit-backdrop");
@@ -870,7 +876,8 @@
   let loaded = false;
   let currentUser = null;
   let unsubscribeTasks = null;
-  let currentSharedListId = null; // if viewing a shared list
+  let joinedLists = []; // [{id, name}] shared lists the user has joined/created
+  let currentListId = "personal"; // "personal" or a shared list id
   let dragSrcId = null;
   let notifGranted = false;
   let notifTimers = {};
@@ -939,6 +946,69 @@
   populateCategorySelect(catInput, "");
   populateCategorySelect(editCatInput, "");
 
+  // ===== JOINED SHARED LISTS =====
+  function loadJoinedLists() {
+    try {
+      const raw = localStorage.getItem("joinedSharedLists");
+      joinedLists = raw ? JSON.parse(raw) : [];
+    } catch {
+      joinedLists = [];
+    }
+    // Migrate from the old single-list storage key, if present.
+    const oldId = localStorage.getItem("currentSharedListId");
+    if (oldId) {
+      if (!joinedLists.find(l => l.id === oldId)) joinedLists.push({ id: oldId, name: "共有リスト" });
+      localStorage.removeItem("currentSharedListId");
+      saveJoinedLists();
+    }
+  }
+
+  function saveJoinedLists() {
+    localStorage.setItem("joinedSharedLists", JSON.stringify(joinedLists));
+  }
+
+  function addJoinedList(id, name) {
+    const existing = joinedLists.find(l => l.id === id);
+    if (existing) existing.name = name;
+    else joinedLists.push({ id, name });
+    saveJoinedLists();
+    renderListSelect();
+  }
+
+  function removeJoinedList(id) {
+    joinedLists = joinedLists.filter(l => l.id !== id);
+    saveJoinedLists();
+    renderListSelect();
+  }
+
+  function renderListSelect() {
+    listSelect.innerHTML = "";
+    const personalOpt = document.createElement("option");
+    personalOpt.value = "personal";
+    personalOpt.textContent = "個人（自分のタスク）";
+    listSelect.appendChild(personalOpt);
+    joinedLists.forEach(l => {
+      const o = document.createElement("option");
+      o.value = l.id;
+      o.textContent = "📋 " + l.name;
+      listSelect.appendChild(o);
+    });
+    listSelect.value = currentListId;
+  }
+
+  function switchToList(id) {
+    currentListId = id;
+    localStorage.setItem("currentListId", id);
+    renderListSelect();
+    if (id === "personal") {
+      subscribeTasks(currentUser.uid);
+    } else {
+      subscribeSharedList(id);
+    }
+  }
+
+  listSelect.addEventListener("change", () => switchToList(listSelect.value));
+
   // ===== AUTH =====
   function showLogin(errorMsg) {
     loginScreen.classList.remove("hidden");
@@ -961,17 +1031,19 @@
     if (user) {
       currentUser = user;
       showApp(user);
-      // Check URL for shared list
+      loadJoinedLists();
+      renderListSelect();
+      // Check URL for shared list invite link
       const urlParams = new URLSearchParams(location.search);
       const sharedId = urlParams.get("share");
       if (sharedId) {
         joinSharedList(sharedId);
       } else {
-        const saved = localStorage.getItem("currentSharedListId");
-        if (saved) {
-          subscribeSharedList(saved);
+        const saved = localStorage.getItem("currentListId") || "personal";
+        if (saved !== "personal" && joinedLists.find(l => l.id === saved)) {
+          switchToList(saved);
         } else {
-          subscribeTasks(user.uid);
+          switchToList("personal");
         }
       }
       updateNotifBtn();
@@ -980,7 +1052,7 @@
       currentUser = null;
       if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
       tasks = []; loaded = false;
-      currentSharedListId = null;
+      currentListId = "personal";
       showLogin();
     }
   });
@@ -1009,9 +1081,7 @@
   function subscribeTasks(uid) {
     if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
     loaded = false; tasks = []; render();
-    currentSharedListId = null;
     shareBanner.classList.add("hidden");
-    localStorage.removeItem("currentSharedListId");
 
     const q = query(tasksCol, where("userId", "==", uid), orderBy("createdAt", "desc"));
     unsubscribeTasks = onSnapshot(q, snapshot => {
@@ -1028,8 +1098,6 @@
   function subscribeSharedList(sharedListId) {
     if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
     loaded = false; tasks = []; render();
-    currentSharedListId = sharedListId;
-    localStorage.setItem("currentSharedListId", sharedListId);
 
     // load list meta
     getDoc(doc(db, "sharedLists", sharedListId)).then(snap => {
@@ -1037,8 +1105,14 @@
         const name = snap.data().name || "共有リスト";
         shareBannerText.textContent = "📋 " + name;
         shareBanner.classList.remove("hidden");
+        addJoinedList(sharedListId, name);
+      } else {
+        // The list was deleted on Firestore after we joined it.
+        showToast("⚠️ このリストは削除されています");
+        removeJoinedList(sharedListId);
+        if (currentListId === sharedListId) switchToList("personal");
       }
-    });
+    }).catch(err => console.error(err));
 
     const q = query(tasksCol, where("sharedListId", "==", sharedListId), orderBy("createdAt", "desc"));
     unsubscribeTasks = onSnapshot(q, snapshot => {
@@ -1069,24 +1143,28 @@
   async function joinSharedList(id) {
     try {
       const snap = await getDoc(doc(db, "sharedLists", id));
-      if (!snap.exists()) { showToast("⚠️ 共有リストが見つかりません"); subscribeTasks(currentUser.uid); return; }
+      if (!snap.exists()) { showToast("⚠️ 共有リストが見つかりません"); switchToList("personal"); history.replaceState({}, "", location.pathname); return; }
       // Add user to members
       await updateDoc(doc(db, "sharedLists", id), {
         [`members.${currentUser.uid}`]: currentUser.displayName || currentUser.email
       });
-      subscribeSharedList(id);
+      const name = snap.data().name || "共有リスト";
+      addJoinedList(id, name);
+      switchToList(id);
       showToast("✅ 共有リストに参加しました");
       // Clean up URL
       history.replaceState({}, "", location.pathname);
     } catch (err) {
       console.error(err);
-      subscribeTasks(currentUser.uid);
+      switchToList("personal");
     }
   }
 
   leaveShareBtn.addEventListener("click", () => {
-    if (!confirm("共有リストを退出しますか？自分のタスクリストに戻ります。")) return;
-    subscribeTasks(currentUser.uid);
+    if (currentListId === "personal") return;
+    if (!confirm("共有リストを退出しますか？参加中のリストから削除され、個人のタスクに戻ります。")) return;
+    removeJoinedList(currentListId);
+    switchToList("personal");
   });
 
   // ===== URGENCY / LABELS =====
@@ -1324,7 +1402,7 @@
         createdAt: serverTimestamp(),
         order: maxOrder + 1,
       };
-      if (currentSharedListId) data.sharedListId = currentSharedListId;
+      if (currentListId !== "personal") data.sharedListId = currentListId;
       await addDoc(tasksCol, data);
     } catch (err) {
       console.error("追加エラー:", err);
@@ -1578,7 +1656,8 @@
       shareLinkText.textContent = link;
       shareLinkArea.classList.remove("hidden");
       shareLinkArea.style.display = "flex";
-      subscribeSharedList(ref.id);
+      addJoinedList(ref.id, name);
+      switchToList(ref.id);
       showToast("✅ 共有リストを作成しました");
     } catch (err) {
       console.error(err);
