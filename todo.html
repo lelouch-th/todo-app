@@ -616,6 +616,8 @@
   }
   .copy-btn:active { opacity: 0.8; }
 
+  #share-invite-fields { display: flex; flex-direction: column; gap: 10px; }
+
   /* Edit modal specific */
   #edit-modal { z-index: 102; }
   #edit-backdrop { z-index: 101; }
@@ -775,16 +777,27 @@
     <h2 id="share-modal-title">📋 共有リスト</h2>
   </div>
   <div class="modal-body" id="share-modal-body">
-    <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">共有リストを作成すると、招待リンクを受け取った人が同じタスクリストを見て編集できます。</p>
-    <label class="field">
-      <span class="field-label">リスト名</span>
-      <input type="text" id="share-list-name" placeholder="例: 家族の買い物リスト" maxlength="50">
-    </label>
-    <div id="share-link-area" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
-      <span class="field-label">招待リンク</span>
-      <div class="share-link-box" id="share-link-text"></div>
-      <button class="copy-btn" id="copy-link-btn">📋 リンクをコピー</button>
+    <p style="font-size:15px;color:var(--text-muted);line-height:1.6;" id="share-modal-desc">共有リストを作成すると、招待リンクを受け取った人が同じタスクリストを見て編集できます。</p>
+
+    <div id="share-create-fields">
+      <label class="field">
+        <span class="field-label">リスト名</span>
+        <input type="text" id="share-list-name" placeholder="例: 家族の買い物リスト" maxlength="50">
+      </label>
+      <div id="share-link-area" class="hidden" style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+        <span class="field-label">招待リンク</span>
+        <div class="share-link-box" id="share-link-text"></div>
+        <button class="copy-btn" id="copy-link-btn">📋 リンクをコピー</button>
+      </div>
     </div>
+
+    <div id="share-invite-fields" class="hidden">
+      <span class="field-label">招待リンク</span>
+      <div class="share-link-box" id="invite-link-text"></div>
+      <button class="copy-btn" id="invite-copy-link-btn">📋 リンクをコピー</button>
+      <button type="button" class="btn btn-secondary" id="new-list-btn" style="width:100%;margin-top:6px;">＋ 別のリストを作成</button>
+    </div>
+
     <div class="modal-actions">
       <button type="button" class="btn btn-secondary" id="share-cancel">閉じる</button>
       <button type="button" class="btn btn-primary" id="create-share-btn">共有リストを作成</button>
@@ -858,12 +871,19 @@
   // Share modal
   const shareBackdrop   = document.getElementById("share-backdrop");
   const shareModal      = document.getElementById("share-modal");
+  const shareModalTitle = document.getElementById("share-modal-title");
+  const shareModalDesc  = document.getElementById("share-modal-desc");
   const shareCancel     = document.getElementById("share-cancel");
   const shareListName   = document.getElementById("share-list-name");
   const createShareBtn  = document.getElementById("create-share-btn");
   const shareLinkArea   = document.getElementById("share-link-area");
   const shareLinkText   = document.getElementById("share-link-text");
   const copyLinkBtn     = document.getElementById("copy-link-btn");
+  const shareCreateFields = document.getElementById("share-create-fields");
+  const shareInviteFields = document.getElementById("share-invite-fields");
+  const inviteLinkText  = document.getElementById("invite-link-text");
+  const inviteCopyLinkBtn = document.getElementById("invite-copy-link-btn");
+  const newListBtn      = document.getElementById("new-list-btn");
   const shareBanner     = document.getElementById("share-banner");
   const shareBannerText = document.getElementById("share-banner-text");
   const leaveShareBtn   = document.getElementById("leave-share-btn");
@@ -1626,14 +1646,49 @@
   shareHeaderBtn.addEventListener("click", openShareModal);
   document.querySelector(".user-menu").insertBefore(shareHeaderBtn, notifBtn);
 
-  function openShareModal() {
+  function showShareCreateView() {
+    shareModalTitle.textContent = "📋 共有リストを作成";
+    shareModalDesc.textContent = "共有リストを作成すると、招待リンクを受け取った人が同じタスクリストを見て編集できます。";
+    shareCreateFields.classList.remove("hidden");
+    shareInviteFields.classList.add("hidden");
+    createShareBtn.classList.remove("hidden");
     shareLinkArea.classList.add("hidden");
     shareListName.value = "";
+  }
+
+  function showShareInviteView(listId, listName) {
+    shareModalTitle.textContent = `📋 「${listName}」の招待リンク`;
+    shareModalDesc.textContent = "この招待リンクを送ると、相手も同じリストに参加して編集できます。";
+    shareCreateFields.classList.add("hidden");
+    shareInviteFields.classList.remove("hidden");
+    createShareBtn.classList.add("hidden");
+    inviteLinkText.textContent = `${location.origin}${location.pathname}?share=${listId}`;
+  }
+
+  function openShareModal() {
+    if (currentListId === "personal") {
+      showShareCreateView();
+    } else {
+      const listMeta = joinedLists.find(l => l.id === currentListId);
+      showShareInviteView(currentListId, listMeta ? listMeta.name : "共有リスト");
+    }
     shareModal.classList.add("open");
     shareBackdrop.classList.add("open");
     document.body.classList.add("modal-open");
     shareModal.setAttribute("aria-hidden", "false");
   }
+
+  newListBtn.addEventListener("click", showShareCreateView);
+
+  inviteCopyLinkBtn.addEventListener("click", async () => {
+    const link = inviteLinkText.textContent;
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast("📋 リンクをコピーしました");
+    } catch {
+      prompt("以下のリンクをコピーしてください:", link);
+    }
+  });
 
   function closeShareModal() {
     shareModal.classList.remove("open");
