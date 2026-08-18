@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#4f46e5">
-<title>ToDo繝ｪ繧ｹ繝・/title>
+<title>ToDoリスト</title>
 <style>
   :root {
     --primary: #6366f1;
@@ -614,9 +614,9 @@
 <!-- LOGIN SCREEN -->
 <div class="login-screen hidden" id="login-screen">
   <div class="login-card">
-    <div class="login-icon">笨・/div>
-    <h1 class="login-title">ToDo繝ｪ繧ｹ繝・/h1>
-    <p class="login-subtitle">繧ｿ繧ｹ繧ｯ繧堤ｮ｡逅・☆繧九◆繧√↓<br>Google繧｢繧ｫ繧ｦ繝ｳ繝医〒繝ｭ繧ｰ繧､繝ｳ縺励※縺上□縺輔＞</p>
+    <div class="login-icon">✓</div>
+    <h1 class="login-title">ToDoリスト</h1>
+    <p class="login-subtitle">タスクを管理するために<br>Googleアカウントでログインしてください</p>
     <button class="google-btn" id="google-btn">
       <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
         <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
@@ -624,7 +624,7 @@
         <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
         <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
       </svg>
-      Google縺ｧ繝ｭ繧ｰ繧､繝ｳ
+      Googleでログイン
     </button>
     <div class="login-error hidden" id="login-error"></div>
   </div>
@@ -635,39 +635,39 @@
   <header>
     <div class="header-top">
       <div class="title-group">
-        <span class="header-icon">笨・/span>
-        <h1>ToDo繝ｪ繧ｹ繝・/h1>
+        <span class="header-icon">✓</span>
+        <h1>ToDoリスト</h1>
       </div>
       <div class="user-menu">
-        <button class="notif-btn" id="notif-btn" title="騾夂衍險ｭ螳・>粕</button>
+        <button class="notif-btn" id="notif-btn" title="通知設定">🔔</button>
         <img class="user-avatar" id="user-avatar" alt="">
-        <button class="logout-btn" id="logout-btn" aria-label="繝ｭ繧ｰ繧｢繧ｦ繝・ title="繝ｭ繧ｰ繧｢繧ｦ繝・>竡・/button>
+        <button class="logout-btn" id="logout-btn" aria-label="ログアウト" title="ログアウト">⎋</button>
       </div>
     </div>
-    <div class="counter" id="counter">繧ｿ繧ｹ繧ｯ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ</div>
+    <div class="counter" id="counter">タスクはまだありません</div>
   </header>
 
   <div id="share-banner" class="share-banner hidden">
-    <span id="share-banner-text">搭 蜈ｱ譛峨Μ繧ｹ繝・/span>
-    <button id="leave-share-btn">騾蜃ｺ</button>
+    <span id="share-banner-text">📋 共有リスト</span>
+    <button id="leave-share-btn">退出</button>
   </div>
 
   <div class="filter-area">
     <div class="filters">
-      <button class="filter-btn active" data-filter="all">縺吶∋縺ｦ</button>
-      <button class="filter-btn" data-filter="active">譛ｪ螳御ｺ・/button>
-      <button class="filter-btn" data-filter="done">螳御ｺ・/button>
+      <button class="filter-btn active" data-filter="all">すべて</button>
+      <button class="filter-btn" data-filter="active">未完了</button>
+      <button class="filter-btn" data-filter="done">完了</button>
     </div>
     <div class="category-filters" id="category-filters">
       <!-- dynamically filled -->
     </div>
     <div class="sort-bar">
-      <span class="sort-label">荳ｦ縺ｹ譖ｿ縺・</span>
+      <span class="sort-label">並べ替え:</span>
       <select class="sort-select" id="sort-select">
-        <option value="manual">謇句虚・医ラ繝ｩ繝・げ・・/option>
-        <option value="priority">蜆ｪ蜈亥ｺｦ</option>
-        <option value="dueDate">譛滄剞譌･</option>
-        <option value="createdAt">菴懈・譌･</option>
+        <option value="manual">手動（ドラッグ）</option>
+        <option value="priority">優先度</option>
+        <option value="dueDate">期限日</option>
+        <option value="createdAt">作成日</option>
       </select>
     </div>
   </div>
@@ -676,39 +676,39 @@
 </div>
 
 <!-- FAB -->
-<button class="fab hidden" id="fab" aria-label="繧ｿ繧ｹ繧ｯ繧定ｿｽ蜉">+</button>
+<button class="fab hidden" id="fab" aria-label="タスクを追加">+</button>
 
 <!-- ADD MODAL -->
 <div class="modal-backdrop" id="modal-backdrop"></div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
   <div class="modal-handle"></div>
   <div class="modal-header">
-    <h2 id="modal-title">譁ｰ縺励＞繧ｿ繧ｹ繧ｯ</h2>
+    <h2 id="modal-title">新しいタスク</h2>
   </div>
   <form id="modal-form" class="modal-body">
     <label class="field">
-      <span class="field-label">繧ｿ繧ｹ繧ｯ蜷・/span>
-      <input type="text" id="task-input" placeholder="菴輔ｒ縺励∪縺吶°・・ autocomplete="off" maxlength="200" required>
+      <span class="field-label">タスク名</span>
+      <input type="text" id="task-input" placeholder="何をしますか？" autocomplete="off" maxlength="200" required>
     </label>
     <label class="field">
-      <span class="field-label">譛滄剞譌･・井ｻｻ諢擾ｼ・/span>
+      <span class="field-label">期限日（任意）</span>
       <input type="date" id="due-date-input">
     </label>
     <div class="field">
-      <span class="field-label">蜆ｪ蜈亥ｺｦ</span>
+      <span class="field-label">優先度</span>
       <div class="priority-group" id="priority-group">
-        <button type="button" class="priority-btn" data-priority="high">閥 鬮・/button>
-        <button type="button" class="priority-btn selected" data-priority="mid">泯 荳ｭ</button>
-        <button type="button" class="priority-btn" data-priority="low">泙 菴・/button>
+        <button type="button" class="priority-btn" data-priority="high">🔴 高</button>
+        <button type="button" class="priority-btn selected" data-priority="mid">🟡 中</button>
+        <button type="button" class="priority-btn" data-priority="low">🟢 低</button>
       </div>
     </div>
     <label class="field">
-      <span class="field-label">繧ｫ繝・ざ繝ｪ・井ｻｻ諢擾ｼ・/span>
-      <input type="text" id="category-input" placeholder="莉穂ｺ九・蛟倶ｺｺ繝ｻ雋ｷ縺・黄 縺ｪ縺ｩ" maxlength="30">
+      <span class="field-label">カテゴリ（任意）</span>
+      <input type="text" id="category-input" placeholder="仕事・個人・買い物 など" maxlength="30">
     </label>
     <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" id="modal-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
-      <button type="submit" class="btn btn-primary" id="modal-submit">霑ｽ蜉</button>
+      <button type="button" class="btn btn-secondary" id="modal-cancel">キャンセル</button>
+      <button type="submit" class="btn btn-primary" id="modal-submit">追加</button>
     </div>
   </form>
 </div>
@@ -718,33 +718,33 @@
 <div class="modal" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" aria-hidden="true">
   <div class="modal-handle"></div>
   <div class="modal-header">
-    <h2 id="edit-modal-title">繧ｿ繧ｹ繧ｯ繧堤ｷｨ髮・/h2>
+    <h2 id="edit-modal-title">タスクを編集</h2>
   </div>
   <form id="edit-form" class="modal-body">
     <input type="hidden" id="edit-task-id">
     <label class="field">
-      <span class="field-label">繧ｿ繧ｹ繧ｯ蜷・/span>
+      <span class="field-label">タスク名</span>
       <input type="text" id="edit-task-input" autocomplete="off" maxlength="200" required>
     </label>
     <label class="field">
-      <span class="field-label">譛滄剞譌･・井ｻｻ諢擾ｼ・/span>
+      <span class="field-label">期限日（任意）</span>
       <input type="date" id="edit-due-date-input">
     </label>
     <div class="field">
-      <span class="field-label">蜆ｪ蜈亥ｺｦ</span>
+      <span class="field-label">優先度</span>
       <div class="priority-group" id="edit-priority-group">
-        <button type="button" class="priority-btn" data-priority="high">閥 鬮・/button>
-        <button type="button" class="priority-btn selected" data-priority="mid">泯 荳ｭ</button>
-        <button type="button" class="priority-btn" data-priority="low">泙 菴・/button>
+        <button type="button" class="priority-btn" data-priority="high">🔴 高</button>
+        <button type="button" class="priority-btn selected" data-priority="mid">🟡 中</button>
+        <button type="button" class="priority-btn" data-priority="low">🟢 低</button>
       </div>
     </div>
     <label class="field">
-      <span class="field-label">繧ｫ繝・ざ繝ｪ・井ｻｻ諢擾ｼ・/span>
-      <input type="text" id="edit-category-input" placeholder="莉穂ｺ九・蛟倶ｺｺ繝ｻ雋ｷ縺・黄 縺ｪ縺ｩ" maxlength="30">
+      <span class="field-label">カテゴリ（任意）</span>
+      <input type="text" id="edit-category-input" placeholder="仕事・個人・買い物 など" maxlength="30">
     </label>
     <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" id="edit-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
-      <button type="submit" class="btn btn-primary">菫晏ｭ・/button>
+      <button type="button" class="btn btn-secondary" id="edit-cancel">キャンセル</button>
+      <button type="submit" class="btn btn-primary">保存</button>
     </div>
   </form>
 </div>
@@ -754,22 +754,22 @@
 <div class="modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" aria-hidden="true">
   <div class="modal-handle"></div>
   <div class="modal-header">
-    <h2 id="share-modal-title">搭 蜈ｱ譛峨Μ繧ｹ繝・/h2>
+    <h2 id="share-modal-title">📋 共有リスト</h2>
   </div>
   <div class="modal-body" id="share-modal-body">
-    <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・縺吶ｋ縺ｨ縲∵魚蠕・Μ繝ｳ繧ｯ繧貞女縺大叙縺｣縺滉ｺｺ縺悟酔縺倥ち繧ｹ繧ｯ繝ｪ繧ｹ繝医ｒ隕九※邱ｨ髮・〒縺阪∪縺吶・/p>
+    <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">共有リストを作成すると、招待リンクを受け取った人が同じタスクリストを見て編集できます。</p>
     <label class="field">
-      <span class="field-label">繝ｪ繧ｹ繝亥錐</span>
-      <input type="text" id="share-list-name" placeholder="萓・ 螳ｶ譌上・雋ｷ縺・黄繝ｪ繧ｹ繝・ maxlength="50">
+      <span class="field-label">リスト名</span>
+      <input type="text" id="share-list-name" placeholder="例: 家族の買い物リスト" maxlength="50">
     </label>
     <div id="share-link-area" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
-      <span class="field-label">諡帛ｾ・Μ繝ｳ繧ｯ</span>
+      <span class="field-label">招待リンク</span>
       <div class="share-link-box" id="share-link-text"></div>
-      <button class="copy-btn" id="copy-link-btn">搭 繝ｪ繝ｳ繧ｯ繧偵さ繝斐・</button>
+      <button class="copy-btn" id="copy-link-btn">📋 リンクをコピー</button>
     </div>
     <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" id="share-cancel">髢峨§繧・/button>
-      <button type="button" class="btn btn-primary" id="create-share-btn">蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・</button>
+      <button type="button" class="btn btn-secondary" id="share-cancel">閉じる</button>
+      <button type="button" class="btn btn-primary" id="create-share-btn">共有リストを作成</button>
     </div>
   </div>
 </div>
@@ -937,7 +937,7 @@
       await signInWithPopup(auth, provider);
     } catch (err) {
       if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
-        loginError.textContent = "繝ｭ繧ｰ繧､繝ｳ縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + (err.message || err.code);
+        loginError.textContent = "ログインに失敗しました: " + (err.message || err.code);
         loginError.classList.remove("hidden");
       }
     } finally {
@@ -946,7 +946,7 @@
   });
 
   logoutBtn.addEventListener("click", async () => {
-    if (!confirm("繝ｭ繧ｰ繧｢繧ｦ繝医＠縺ｾ縺吶°・・)) return;
+    if (!confirm("ログアウトしますか？")) return;
     try { await signOut(auth); } catch (err) { console.error(err); }
   });
 
@@ -966,7 +966,7 @@
       scheduleNotifications();
     }, err => {
       console.error("Firestore listen error:", err);
-      counter.textContent = "謗･邯壹お繝ｩ繝ｼ: " + err.message;
+      counter.textContent = "接続エラー: " + err.message;
     });
   }
 
@@ -979,8 +979,8 @@
     // load list meta
     getDoc(doc(db, "sharedLists", sharedListId)).then(snap => {
       if (snap.exists()) {
-        const name = snap.data().name || "蜈ｱ譛峨Μ繧ｹ繝・;
-        shareBannerText.textContent = "搭 " + name;
+        const name = snap.data().name || "共有リスト";
+        shareBannerText.textContent = "📋 " + name;
         shareBanner.classList.remove("hidden");
       }
     });
@@ -1014,13 +1014,13 @@
   async function joinSharedList(id) {
     try {
       const snap = await getDoc(doc(db, "sharedLists", id));
-      if (!snap.exists()) { showToast("笞・・蜈ｱ譛峨Μ繧ｹ繝医′隕九▽縺九ｊ縺ｾ縺帙ｓ"); subscribeTasks(currentUser.uid); return; }
+      if (!snap.exists()) { showToast("⚠️ 共有リストが見つかりません"); subscribeTasks(currentUser.uid); return; }
       // Add user to members
       await updateDoc(doc(db, "sharedLists", id), {
         [`members.${currentUser.uid}`]: currentUser.displayName || currentUser.email
       });
       subscribeSharedList(id);
-      showToast("笨・蜈ｱ譛峨Μ繧ｹ繝医↓蜿ょ刈縺励∪縺励◆");
+      showToast("✅ 共有リストに参加しました");
       // Clean up URL
       history.replaceState({}, "", location.pathname);
     } catch (err) {
@@ -1030,7 +1030,7 @@
   }
 
   leaveShareBtn.addEventListener("click", () => {
-    if (!confirm("蜈ｱ譛峨Μ繧ｹ繝医ｒ騾蜃ｺ縺励∪縺吶°・溯・蛻・・繧ｿ繧ｹ繧ｯ繝ｪ繧ｹ繝医↓謌ｻ繧翫∪縺吶・)) return;
+    if (!confirm("共有リストを退出しますか？自分のタスクリストに戻ります。")) return;
     subscribeTasks(currentUser.uid);
   });
 
@@ -1053,18 +1053,18 @@
     if (isNaN(due)) return "";
     const dateStr = `${due.getMonth()+1}/${due.getDate()}`;
     const u = getUrgency(dueDate);
-    if (!u) return `套 ${dateStr}`;
-    if (u.diff < 0) return `笞・・${dateStr} (${-u.diff}譌･雜・℃)`;
-    if (u.diff === 0) return `竢ｰ ${dateStr} (莉頑律)`;
-    if (u.diff === 1) return `套 ${dateStr} (譏取律)`;
-    if (u.diff <= 7) return `套 ${dateStr} (縺ゅ→${u.diff}譌･)`;
-    return `套 ${dateStr}`;
+    if (!u) return `📅 ${dateStr}`;
+    if (u.diff < 0) return `⚠️ ${dateStr} (${-u.diff}日超過)`;
+    if (u.diff === 0) return `⏰ ${dateStr} (今日)`;
+    if (u.diff === 1) return `📅 ${dateStr} (明日)`;
+    if (u.diff <= 7) return `📅 ${dateStr} (あと${u.diff}日)`;
+    return `📅 ${dateStr}`;
   }
 
   function priorityLabel(p) {
-    if (p === "high") return "鬮・;
-    if (p === "low") return "菴・;
-    return "荳ｭ";
+    if (p === "high") return "高";
+    if (p === "low") return "低";
+    return "中";
   }
 
   // ===== SORT =====
@@ -1108,7 +1108,7 @@
 
     const allChip = document.createElement("button");
     allChip.className = "cat-chip" + (categoryFilter === "all" ? " active" : "");
-    allChip.textContent = "捷 縺吶∋縺ｦ";
+    allChip.textContent = "🏷 すべて";
     allChip.addEventListener("click", () => { categoryFilter = "all"; render(); });
     catFilters.appendChild(allChip);
 
@@ -1138,11 +1138,11 @@
     if (filtered.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty";
-      const msg = !loaded ? "隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ..."
-                : filter === "done" ? "螳御ｺ・＠縺溘ち繧ｹ繧ｯ縺ｯ縺ゅｊ縺ｾ縺帙ｓ"
-                : filter === "active" ? "譛ｪ螳御ｺ・・繧ｿ繧ｹ繧ｯ縺ｯ縺ゅｊ縺ｾ縺帙ｓ"
-                : "繧ｿ繧ｹ繧ｯ繧定ｿｽ蜉縺励※縺ｿ縺ｾ縺励ｇ縺・;
-      empty.innerHTML = `<div class="icon">統</div>${msg}`;
+      const msg = !loaded ? "読み込み中..."
+                : filter === "done" ? "完了したタスクはありません"
+                : filter === "active" ? "未完了のタスクはありません"
+                : "タスクを追加してみましょう";
+      empty.innerHTML = `<div class="icon">📝</div>${msg}`;
       list.appendChild(empty);
     } else {
       filtered.forEach(task => {
@@ -1165,8 +1165,8 @@
     // Drag handle
     const handle = document.createElement("div");
     handle.className = "drag-handle";
-    handle.innerHTML = "笄ｿ";
-    handle.title = "繝峨Λ繝・げ縺励※荳ｦ縺ｹ譖ｿ縺・;
+    handle.innerHTML = "⠿";
+    handle.title = "ドラッグして並べ替え";
 
     // Checkbox
     const checkbox = document.createElement("div");
@@ -1182,7 +1182,7 @@
     const text = document.createElement("div");
     text.className = "task-text";
     text.textContent = task.text;
-    text.title = "繧ｯ繝ｪ繝・け縺ｧ邱ｨ髮・;
+    text.title = "クリックで編集";
     text.addEventListener("click", () => openEditModal(task));
     main.appendChild(text);
 
@@ -1216,14 +1216,14 @@
 
     const editBtn = document.createElement("button");
     editBtn.className = "icon-btn edit-btn";
-    editBtn.setAttribute("aria-label", "邱ｨ髮・);
-    editBtn.innerHTML = "笨擾ｸ・;
+    editBtn.setAttribute("aria-label", "編集");
+    editBtn.innerHTML = "✏️";
     editBtn.addEventListener("click", () => openEditModal(task));
 
     const delBtn = document.createElement("button");
     delBtn.className = "icon-btn delete-btn";
-    delBtn.setAttribute("aria-label", "蜑企勁");
-    delBtn.innerHTML = "卵";
+    delBtn.setAttribute("aria-label", "削除");
+    delBtn.innerHTML = "🗑";
     delBtn.addEventListener("click", () => deleteTask(task.id, li));
 
     actions.append(editBtn, delBtn);
@@ -1245,10 +1245,10 @@
       return u && u.cls === "overdue";
     }).length;
     if (total === 0) {
-      counter.textContent = loaded ? "繧ｿ繧ｹ繧ｯ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ" : "隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...";
+      counter.textContent = loaded ? "タスクはまだありません" : "読み込み中...";
     } else {
-      let msg = `谿九ｊ ${remaining} 莉ｶ / 蜈ｨ ${total} 莉ｶ`;
-      if (overdue > 0) msg += ` 笞・・譛滄剞雜・℃ ${overdue} 莉ｶ`;
+      let msg = `残り ${remaining} 件 / 全 ${total} 件`;
+      if (overdue > 0) msg += ` ⚠️ 期限超過 ${overdue} 件`;
       counter.textContent = msg;
     }
   }
@@ -1272,8 +1272,8 @@
       if (currentSharedListId) data.sharedListId = currentSharedListId;
       await addDoc(tasksCol, data);
     } catch (err) {
-      console.error("霑ｽ蜉繧ｨ繝ｩ繝ｼ:", err);
-      alert("繧ｿ繧ｹ繧ｯ縺ｮ霑ｽ蜉縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
+      console.error("追加エラー:", err);
+      alert("タスクの追加に失敗しました: " + err.message);
     }
   }
 
@@ -1286,8 +1286,8 @@
         category: category.trim() || "",
       });
     } catch (err) {
-      console.error("邱ｨ髮・お繝ｩ繝ｼ:", err);
-      alert("繧ｿ繧ｹ繧ｯ縺ｮ譖ｴ譁ｰ縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
+      console.error("編集エラー:", err);
+      alert("タスクの更新に失敗しました: " + err.message);
     }
   }
 
@@ -1295,7 +1295,7 @@
     try {
       await updateDoc(doc(db, "tasks", id), { done: !currentDone });
     } catch (err) {
-      console.error("譖ｴ譁ｰ繧ｨ繝ｩ繝ｼ:", err);
+      console.error("更新エラー:", err);
     }
   }
 
@@ -1305,7 +1305,7 @@
       try {
         await deleteDoc(doc(db, "tasks", id));
       } catch (err) {
-        console.error("蜑企勁繧ｨ繝ｩ繝ｼ:", err);
+        console.error("削除エラー:", err);
         el.classList.remove("removing");
       }
     }, 180);
@@ -1384,7 +1384,7 @@
     try {
       await Promise.all(updates);
     } catch (err) {
-      console.error("荳ｦ縺ｹ譖ｿ縺医お繝ｩ繝ｼ:", err);
+      console.error("並べ替えエラー:", err);
     }
   }
 
@@ -1478,13 +1478,13 @@
   // Trigger share from header share button (reuse notif area) - add share icon to actions
   // Open from FAB long press or from a separate button. Let's add a share button in the header.
   // We'll open it programmatically. A "Share" option in a small menu would be ideal,
-  // but for simplicity, let's add a 迫 button next to the notif button.
+  // but for simplicity, let's add a 🔗 button next to the notif button.
   // The share modal is opened via openShareModal() which we call from a button we inject.
 
   const shareHeaderBtn = document.createElement("button");
   shareHeaderBtn.className = "notif-btn";
-  shareHeaderBtn.title = "蜈ｱ譛峨Μ繧ｹ繝・;
-  shareHeaderBtn.innerHTML = "迫";
+  shareHeaderBtn.title = "共有リスト";
+  shareHeaderBtn.innerHTML = "🔗";
   shareHeaderBtn.addEventListener("click", openShareModal);
   document.querySelector(".user-menu").insertBefore(shareHeaderBtn, notifBtn);
 
@@ -1509,10 +1509,10 @@
 
   createShareBtn.addEventListener("click", async () => {
     if (!currentUser) return;
-    const name = shareListName.value.trim() || "蜈ｱ譛峨Μ繧ｹ繝・;
+    const name = shareListName.value.trim() || "共有リスト";
     try {
       createShareBtn.disabled = true;
-      createShareBtn.textContent = "菴懈・荳ｭ...";
+      createShareBtn.textContent = "作成中...";
       const ref = await addDoc(sharedListsCol, {
         name,
         createdBy: currentUser.uid,
@@ -1523,13 +1523,13 @@
       shareLinkText.textContent = link;
       shareLinkArea.classList.remove("hidden");
       shareLinkArea.style.display = "flex";
-      showToast("笨・蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・縺励∪縺励◆");
+      showToast("✅ 共有リストを作成しました");
     } catch (err) {
       console.error(err);
-      alert("蜈ｱ譛峨Μ繧ｹ繝医・菴懈・縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
+      alert("共有リストの作成に失敗しました: " + err.message);
     } finally {
       createShareBtn.disabled = false;
-      createShareBtn.textContent = "蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・";
+      createShareBtn.textContent = "共有リストを作成";
     }
   });
 
@@ -1537,35 +1537,35 @@
     const link = shareLinkText.textContent;
     try {
       await navigator.clipboard.writeText(link);
-      showToast("搭 繝ｪ繝ｳ繧ｯ繧偵さ繝斐・縺励∪縺励◆");
+      showToast("📋 リンクをコピーしました");
     } catch {
-      prompt("莉･荳九・繝ｪ繝ｳ繧ｯ繧偵さ繝斐・縺励※縺上□縺輔＞:", link);
+      prompt("以下のリンクをコピーしてください:", link);
     }
   });
 
   // ===== NOTIFICATIONS =====
   async function requestNotifPermission() {
-    if (!("Notification" in window)) { showToast("笞・・縺薙・繝悶Λ繧ｦ繧ｶ縺ｯ騾夂衍縺ｫ蟇ｾ蠢懊＠縺ｦ縺・∪縺帙ｓ"); return; }
+    if (!("Notification" in window)) { showToast("⚠️ このブラウザは通知に対応していません"); return; }
     if (Notification.permission === "granted") {
-      showToast("粕 騾夂衍縺ｯ縺吶〒縺ｫ險ｱ蜿ｯ縺輔ｌ縺ｦ縺・∪縺・);
+      showToast("🔔 通知はすでに許可されています");
       return;
     }
     const result = await Notification.requestPermission();
     notifGranted = result === "granted";
     updateNotifBtn();
     if (notifGranted) {
-      showToast("笨・騾夂衍繧定ｨｱ蜿ｯ縺励∪縺励◆");
+      showToast("✅ 通知を許可しました");
       scheduleNotifications();
     } else {
-      showToast("舶 騾夂衍縺梧拠蜷ｦ縺輔ｌ縺ｾ縺励◆");
+      showToast("🔕 通知が拒否されました");
     }
   }
 
   function updateNotifBtn() {
     const perm = typeof Notification !== "undefined" ? Notification.permission : "denied";
     notifGranted = perm === "granted";
-    notifBtn.innerHTML = notifGranted ? "粕" : "舶";
-    notifBtn.title = notifGranted ? "騾夂衍繧ｪ繝ｳ" : "騾夂衍繧定ｨｱ蜿ｯ縺吶ｋ";
+    notifBtn.innerHTML = notifGranted ? "🔔" : "🔕";
+    notifBtn.title = notifGranted ? "通知オン" : "通知を許可する";
     notifBtn.classList.toggle("denied", perm === "denied");
   }
 
@@ -1585,8 +1585,8 @@
       if (diff > 0 && diff < 7 * 86400000) { // within 7 days
         notifTimers[task.id] = setTimeout(() => {
           if (Notification.permission === "granted") {
-            new Notification("竢ｰ 譛滄剞縺ｮ縺顔衍繧峨○", {
-              body: `縲・{task.text}縲阪・譛滄剞縺ｯ莉頑律縺ｧ縺兪,
+            new Notification("⏰ 期限のお知らせ", {
+              body: `「${task.text}」の期限は今日です`,
               icon: "/favicon.ico",
               tag: task.id,
             });
