@@ -1578,6 +1578,7 @@
       shareLinkText.textContent = link;
       shareLinkArea.classList.remove("hidden");
       shareLinkArea.style.display = "flex";
+      subscribeSharedList(ref.id);
       showToast("✅ 共有リストを作成しました");
     } catch (err) {
       console.error(err);
