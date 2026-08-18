@@ -1085,7 +1085,11 @@
 
     const q = query(tasksCol, where("userId", "==", uid), orderBy("createdAt", "desc"));
     unsubscribeTasks = onSnapshot(q, snapshot => {
-      tasks = snapshot.docs.map(d => docToTask(d));
+      // The query matches on userId alone, which also returns tasks that
+      // belong to a shared list (they carry the creator's userId too).
+      // Filter those out client-side so the personal list only shows
+      // tasks with no sharedListId, without needing a new composite index.
+      tasks = snapshot.docs.map(d => docToTask(d)).filter(t => !t.sharedListId);
       loaded = true;
       render();
       scheduleNotifications();
@@ -1136,6 +1140,7 @@
       category: data.category || "",
       order: data.order ?? 0,
       createdAt: data.createdAt,
+      sharedListId: data.sharedListId || null,
     };
   }
 
