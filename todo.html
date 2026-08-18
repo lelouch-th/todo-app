@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#4f46e5">
-<title>ToDoリスト</title>
+<title>ToDo繝ｪ繧ｹ繝・/title>
 <style>
   :root {
     --primary: #6366f1;
@@ -21,14 +21,12 @@
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
     --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
     --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+    --priority-high: #ef4444;
+    --priority-mid: #f59e0b;
+    --priority-low: #10b981;
   }
 
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   html, body {
     height: 100%;
@@ -68,29 +66,10 @@
     box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
   }
 
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  header h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-  }
-
-  .header-icon {
-    font-size: 28px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-  }
-
-  .counter {
-    margin-top: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    opacity: 0.95;
-  }
+  .header-top { display: flex; align-items: center; gap: 10px; }
+  header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.3px; }
+  .header-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+  .counter { margin-top: 6px; font-size: 14px; font-weight: 500; opacity: 0.95; }
 
   .fab {
     position: fixed;
@@ -105,7 +84,7 @@
     font-size: 36px;
     font-weight: 300;
     line-height: 1;
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45), 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45), 0 4px 8px rgba(0,0,0,0.1);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -114,101 +93,57 @@
     z-index: 50;
     font-family: inherit;
   }
+  .fab:active { transform: scale(0.92); box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
 
-  .fab:active {
-    transform: scale(0.92);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-  }
+  @media (max-width: 560px) { .fab { right: 20px; } }
 
-  @media (max-width: 560px) {
-    .fab { right: 20px; }
-  }
-
+  /* ===== MODAL ===== */
   .modal-backdrop {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(15, 23, 42, 0.55);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0; pointer-events: none;
     transition: opacity 0.25s ease-out;
     z-index: 100;
   }
-
-  .modal-backdrop.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
 
   .modal {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 520px;
-    margin: 0 auto;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 520px; margin: 0 auto;
     background: var(--surface);
     border-radius: 24px 24px 0 0;
     padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
     transform: translateY(110%);
     transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
     z-index: 101;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    max-height: 92vh;
+    overflow-y: auto;
   }
-
-  .modal.open {
-    transform: translateY(0);
-  }
+  .modal.open { transform: translateY(0); }
 
   .modal-handle {
-    width: 40px;
-    height: 5px;
+    width: 40px; height: 5px;
     background: #cbd5e1;
     border-radius: 3px;
     margin: 0 auto 18px;
   }
 
-  .modal-header {
-    margin-bottom: 22px;
-    padding: 0 4px;
-  }
+  .modal-header { margin-bottom: 22px; padding: 0 4px; }
+  .modal-header h2 { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
 
-  .modal-header h2 {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.2px;
-  }
+  .modal-body { display: flex; flex-direction: column; gap: 16px; }
 
-  .modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field-label { font-size: 14px; font-weight: 700; color: var(--text-muted); padding-left: 4px; letter-spacing: 0.2px; }
 
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .field-label {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-muted);
-    padding-left: 4px;
-    text-transform: none;
-    letter-spacing: 0.2px;
-  }
-
-  #task-input,
-  #due-date-input {
-    width: 100%;
-    height: 56px;
+  #task-input, #due-date-input, #edit-task-input, #edit-due-date-input,
+  #category-input, #edit-category-input, #share-list-name {
+    width: 100%; height: 56px;
     padding: 0 18px;
-    font-size: 17px;
-    font-weight: 500;
+    font-size: 17px; font-weight: 500;
     border: 2px solid var(--border);
     border-radius: 14px;
     background: #f8fafc;
@@ -217,69 +152,61 @@
     font-family: inherit;
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
-
-  #task-input::placeholder {
-    color: #94a3b8;
-  }
-
-  #task-input:focus,
-  #due-date-input:focus {
+  #task-input::placeholder, #edit-task-input::placeholder,
+  #category-input::placeholder, #edit-category-input::placeholder { color: #94a3b8; }
+  #task-input:focus, #due-date-input:focus, #edit-task-input:focus, #edit-due-date-input:focus,
+  #category-input:focus, #edit-category-input:focus, #share-list-name:focus {
     border-color: var(--primary);
     background: #fff;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
   }
 
-  .modal-actions {
+  /* Priority selector */
+  .priority-group {
     display: flex;
-    gap: 10px;
-    margin-top: 12px;
+    gap: 8px;
   }
-
-  .btn {
+  .priority-btn {
     flex: 1;
-    height: 54px;
-    border: none;
-    border-radius: 14px;
-    font-size: 17px;
+    height: 44px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: #f8fafc;
+    font-size: 14px;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+  .priority-btn[data-priority="high"].selected { background: #fee2e2; border-color: var(--priority-high); color: var(--priority-high); }
+  .priority-btn[data-priority="mid"].selected  { background: #fef3c7; border-color: var(--priority-mid);  color: #b45309; }
+  .priority-btn[data-priority="low"].selected  { background: #d1fae5; border-color: var(--priority-low);  color: #065f46; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 12px; }
+
+  .btn {
+    flex: 1; height: 54px; border: none;
+    border-radius: 14px;
+    font-size: 17px; font-weight: 700; font-family: inherit;
+    cursor: pointer;
     transition: transform 0.1s, background 0.2s, opacity 0.2s, box-shadow 0.2s;
   }
-
-  .btn:active {
-    transform: scale(0.96);
-  }
-
-  .btn-secondary {
-    background: #f1f5f9;
-    color: var(--text);
-  }
-
-  .btn-secondary:active {
-    background: #e2e8f0;
-  }
-
+  .btn:active { transform: scale(0.96); }
+  .btn-secondary { background: #f1f5f9; color: var(--text); }
+  .btn-secondary:active { background: #e2e8f0; }
   .btn-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 4px 14px rgba(99,102,241,0.35);
   }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .btn-danger { background: #fee2e2; color: var(--danger); }
 
-  .btn-primary:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
+  body.modal-open { overflow: hidden; }
 
-  body.modal-open {
-    overflow: hidden;
-  }
-
-  .filters {
-    display: flex;
-    gap: 6px;
-    padding: 14px 16px;
+  /* ===== FILTER BAR ===== */
+  .filter-area {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -287,232 +214,228 @@
     z-index: 5;
   }
 
+  .filters {
+    display: flex;
+    gap: 6px;
+    padding: 14px 16px 8px;
+  }
+
   .filter-btn {
-    flex: 1;
-    height: 44px;
-    border: none;
+    flex: 1; height: 44px; border: none;
     border-radius: 12px;
     background: #fff;
     color: var(--text-muted);
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
+    font-size: 15px; font-weight: 600; font-family: inherit;
     cursor: pointer;
     box-shadow: var(--shadow-sm);
     transition: all 0.2s;
   }
-
-  .filter-btn:active {
-    transform: scale(0.96);
-  }
-
+  .filter-btn:active { transform: scale(0.96); }
   .filter-btn.active {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 4px 12px rgba(99,102,241,0.35);
   }
 
+  /* Category filter chips */
+  .category-filters {
+    display: flex;
+    gap: 6px;
+    padding: 0 16px 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .category-filters::-webkit-scrollbar { display: none; }
+
+  .cat-chip {
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 20px;
+    background: #e2e8f0;
+    color: var(--text-muted);
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .cat-chip.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff;
+  }
+
+  /* ===== TASK LIST ===== */
   #task-list {
     list-style: none;
     flex: 1;
-    padding: 10px 14px 32px;
+    padding: 10px 14px 120px;
     overflow-y: auto;
   }
 
   .task {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    padding: 16px 14px;
+    gap: 12px;
+    padding: 14px 12px;
     margin-bottom: 10px;
     background: var(--surface);
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
     animation: slideIn 0.25s ease-out;
-    transition: box-shadow 0.2s, transform 0.1s;
+    transition: box-shadow 0.2s, transform 0.1s, opacity 0.2s;
+    cursor: grab;
+    border-left: 4px solid transparent;
+    position: relative;
   }
+  .task:active { box-shadow: var(--shadow-md); }
+  .task.dragging { opacity: 0.5; cursor: grabbing; transform: scale(1.02); box-shadow: var(--shadow-lg); }
+  .task.drag-over { border-top: 2px dashed var(--primary); }
 
-  .task:active {
-    box-shadow: var(--shadow-md);
-  }
+  /* Priority border colors */
+  .task[data-priority="high"] { border-left-color: var(--priority-high); }
+  .task[data-priority="mid"]  { border-left-color: var(--priority-mid); }
+  .task[data-priority="low"]  { border-left-color: var(--priority-low); }
 
   @keyframes slideIn {
     from { opacity: 0; transform: translateY(-8px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
-
-  .task.removing {
-    animation: slideOut 0.25s ease-in forwards;
-  }
-
+  .task.removing { animation: slideOut 0.25s ease-in forwards; }
   @keyframes slideOut {
     to { opacity: 0; transform: translateX(60px); height: 0; padding: 0; margin: 0; }
   }
 
   .checkbox {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    margin-top: 2px;
-    border: 2.5px solid #cbd5e1;
-    border-radius: 50%;
+    width: 32px; height: 32px; min-width: 32px; margin-top: 2px;
+    border: 2.5px solid #cbd5e1; border-radius: 50%;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    flex-shrink: 0;
   }
-
-  .checkbox:active {
-    transform: scale(0.88);
-  }
-
-  .task.done .checkbox {
-    background: var(--success);
-    border-color: var(--success);
-  }
-
+  .checkbox:active { transform: scale(0.88); }
+  .task.done .checkbox { background: var(--success); border-color: var(--success); }
   .checkbox::after {
     content: "";
-    width: 14px;
-    height: 7px;
+    width: 14px; height: 7px;
     border-left: 2.5px solid #fff;
     border-bottom: 2.5px solid #fff;
     transform: rotate(-45deg) translate(1px, -2px) scale(0.5);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
   }
-
-  .task.done .checkbox::after {
-    opacity: 1;
-    transform: rotate(-45deg) translate(1px, -2px) scale(1);
-  }
+  .task.done .checkbox::after { opacity: 1; transform: rotate(-45deg) translate(1px, -2px) scale(1); }
 
   .task-main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     min-width: 0;
     padding-top: 2px;
   }
 
-  .task-text {
-    font-size: 17px;
-    font-weight: 500;
-    line-height: 1.4;
-    word-break: break-word;
-    color: var(--text);
-    transition: color 0.2s;
+  .task-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
-  .task.done .task-text {
-    color: #94a3b8;
-    text-decoration: line-through;
-    text-decoration-thickness: 1.5px;
+  .task-text {
+    font-size: 17px; font-weight: 500; line-height: 1.4;
+    word-break: break-word; color: var(--text); transition: color 0.2s;
+    cursor: pointer;
   }
+  .task.done .task-text { color: #94a3b8; text-decoration: line-through; text-decoration-thickness: 1.5px; }
 
   .due-badge {
     align-self: flex-start;
-    padding: 4px 10px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 3px 8px;
+    font-size: 12px; font-weight: 600;
     border-radius: 8px;
-    background: #f1f5f9;
-    color: var(--text-muted);
+    background: #f1f5f9; color: var(--text-muted);
     white-space: nowrap;
   }
 
-  .task.overdue {
-    background: #fef2f2;
-    border-left: 4px solid var(--danger);
-    padding-left: 10px;
+  .priority-badge {
+    padding: 3px 8px;
+    font-size: 11px; font-weight: 700;
+    border-radius: 8px;
+    white-space: nowrap;
+    text-transform: uppercase;
   }
-  .task.overdue .due-badge {
-    background: #fee2e2;
-    color: #b91c1c;
+  .priority-badge.high { background: #fee2e2; color: var(--priority-high); }
+  .priority-badge.mid  { background: #fef3c7; color: #b45309; }
+  .priority-badge.low  { background: #d1fae5; color: #065f46; }
+
+  .category-badge {
+    padding: 3px 8px;
+    font-size: 12px; font-weight: 600;
+    border-radius: 8px;
+    background: #ede9fe; color: #5b21b6;
+    white-space: nowrap;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .task.due-today {
-    background: #fff7ed;
-    border-left: 4px solid #f97316;
-    padding-left: 10px;
+  /* Urgency states */
+  .task.overdue { background: #fef2f2; border-left-color: var(--danger) !important; }
+  .task.overdue .due-badge { background: #fee2e2; color: #b91c1c; }
+  .task.due-today { background: #fff7ed; border-left-color: #f97316 !important; }
+  .task.due-today .due-badge { background: #ffedd5; color: #c2410c; }
+  .task.due-soon { background: #fefce8; border-left-color: #eab308 !important; }
+  .task.due-soon .due-badge { background: #fef9c3; color: #a16207; }
+  .task.done.overdue, .task.done.due-today, .task.done.due-soon {
+    background: var(--surface); border-left-color: transparent !important;
   }
-  .task.due-today .due-badge {
-    background: #ffedd5;
-    color: #c2410c;
-  }
+  .task.done .due-badge { background: #f1f5f9; color: #94a3b8; text-decoration: line-through; }
 
-  .task.due-soon {
-    background: #fefce8;
-    border-left: 4px solid #eab308;
-    padding-left: 10px;
-  }
-  .task.due-soon .due-badge {
-    background: #fef9c3;
-    color: #a16207;
-  }
-
-  .task.done.overdue,
-  .task.done.due-today,
-  .task.done.due-soon {
-    background: var(--surface);
-    border-left: none;
-    padding-left: 14px;
-  }
-  .task.done .due-badge {
-    background: #f1f5f9;
-    color: #94a3b8;
-    text-decoration: line-through;
-  }
-
-  .delete-btn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
-    color: var(--danger);
-    font-size: 24px;
-    font-weight: 300;
-    cursor: pointer;
+  .task-actions {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
     align-items: center;
-    justify-content: center;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: -4px;
   }
 
-  .delete-btn:active {
-    background: #fee2e2;
-    transform: scale(0.9);
+  .icon-btn {
+    width: 36px; height: 36px; min-width: 36px;
+    border: none; border-radius: 10px;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
   }
+  .icon-btn.edit-btn { color: var(--primary); }
+  .icon-btn.edit-btn:active { background: #ede9fe; transform: scale(0.9); }
+  .icon-btn.delete-btn { color: var(--danger); }
+  .icon-btn.delete-btn:active { background: #fee2e2; transform: scale(0.9); }
+  .icon-btn.share-btn { color: var(--success); }
+  .icon-btn.share-btn:active { background: #d1fae5; transform: scale(0.9); }
+
+  /* Drag handle */
+  .drag-handle {
+    width: 20px; height: 36px; min-width: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; color: #cbd5e1; font-size: 16px;
+    flex-shrink: 0;
+    touch-action: none;
+  }
+  .drag-handle:active { cursor: grabbing; }
 
   .empty {
-    text-align: center;
-    padding: 64px 20px;
-    color: var(--text-muted);
-    font-size: 16px;
-    font-weight: 500;
+    text-align: center; padding: 64px 20px;
+    color: var(--text-muted); font-size: 16px; font-weight: 500;
   }
-
-  .empty .icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-  }
+  .empty .icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
 
   @media (min-width: 521px) {
-    .app {
-      min-height: auto;
-      margin-top: 32px;
-      margin-bottom: 32px;
-      border-radius: 24px;
-      overflow: hidden;
-    }
+    .app { min-height: auto; margin-top: 32px; margin-bottom: 32px; border-radius: 24px; overflow: hidden; }
   }
-
   @media (max-width: 380px) {
     header h1 { font-size: 24px; }
     .header-icon { font-size: 24px; }
@@ -522,154 +445,178 @@
 
   .hidden { display: none !important; }
 
+  /* ===== LOGIN ===== */
   .login-screen {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    z-index: 200;
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; z-index: 200;
   }
-
   .login-card {
-    width: 100%;
-    max-width: 400px;
-    background: #fff;
-    border-radius: 24px;
-    padding: 44px 28px 32px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-    text-align: center;
+    width: 100%; max-width: 400px; background: #fff;
+    border-radius: 24px; padding: 44px 28px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25); text-align: center;
   }
-
   .login-icon {
-    width: 76px;
-    height: 76px;
-    margin: 0 auto 22px;
+    width: 76px; height: 76px; margin: 0 auto 22px;
     border-radius: 22px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-    color: #fff;
-    font-size: 42px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.4);
+    color: #fff; font-size: 42px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 24px rgba(99,102,241,0.4);
   }
-
-  .login-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 10px;
-    letter-spacing: -0.3px;
-  }
-
-  .login-subtitle {
-    font-size: 15px;
-    color: var(--text-muted);
-    margin-bottom: 32px;
-    line-height: 1.5;
-  }
-
+  .login-title { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 10px; letter-spacing: -0.3px; }
+  .login-subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.5; }
   .google-btn {
-    width: 100%;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    background: #fff;
-    color: var(--text);
-    font-size: 16px;
-    font-weight: 600;
-    font-family: inherit;
+    width: 100%; height: 56px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    border: 2px solid var(--border); border-radius: 14px;
+    background: #fff; color: var(--text);
+    font-size: 16px; font-weight: 600; font-family: inherit;
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
     box-shadow: var(--shadow-sm);
   }
-
-  .google-btn:active {
-    transform: scale(0.97);
-    background: #f8fafc;
-    border-color: #cbd5e1;
-  }
-
-  .google-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-
-  .google-icon {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-  }
-
+  .google-btn:active { transform: scale(0.97); background: #f8fafc; border-color: #cbd5e1; }
+  .google-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .google-icon { width: 22px; height: 22px; flex-shrink: 0; }
   .login-error {
-    margin-top: 16px;
-    padding: 10px 14px;
-    background: #fef2f2;
-    color: #b91c1c;
+    margin-top: 16px; padding: 10px 14px;
+    background: #fef2f2; color: #b91c1c;
+    font-size: 14px; font-weight: 500; border-radius: 10px; text-align: left;
+  }
+
+  /* ===== HEADER USER ===== */
+  .title-group { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .user-menu { display: flex; align-items: center; gap: 6px; }
+  .user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.2); object-fit: cover;
+  }
+  .logout-btn {
+    width: 40px; height: 40px; border: none; border-radius: 12px;
+    background: rgba(255,255,255,0.18); color: #fff; font-size: 18px;
+    font-family: inherit; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logout-btn:active { background: rgba(255,255,255,0.32); transform: scale(0.9); }
+
+  /* Notification toggle btn in header */
+  .notif-btn {
+    width: 40px; height: 40px; border: none; border-radius: 12px;
+    background: rgba(255,255,255,0.18); color: #fff; font-size: 18px;
+    font-family: inherit; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notif-btn:active { background: rgba(255,255,255,0.32); transform: scale(0.9); }
+  .notif-btn.denied { opacity: 0.5; }
+
+  /* ===== SHARE LIST BANNER ===== */
+  .share-banner {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #fff;
+    padding: 10px 16px;
     font-size: 14px;
-    font-weight: 500;
-    border-radius: 10px;
-    text-align: left;
-  }
-
-  .title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-menu {
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
   }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.55);
-    background: rgba(255, 255, 255, 0.2);
-    object-fit: cover;
+  .share-banner span { flex: 1; }
+  .share-banner button {
+    border: none; background: rgba(255,255,255,0.2);
+    color: #fff; border-radius: 8px; padding: 4px 10px;
+    font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
   }
 
-  .logout-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-    font-size: 18px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+  /* Sort options */
+  .sort-bar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
+    padding: 0 16px 10px;
   }
+  .sort-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+  .sort-select {
+    flex: 1; height: 34px; padding: 0 10px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    background: #fff; color: var(--text);
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer; outline: none;
+  }
+  .sort-select:focus { border-color: var(--primary); }
 
-  .logout-btn:active {
-    background: rgba(255, 255, 255, 0.32);
-    transform: scale(0.9);
+  /* Notification toast */
+  .toast-container {
+    position: fixed;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    max-width: 400px;
+    width: calc(100% - 32px);
   }
+  .toast {
+    background: #1e293b;
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.7s forwards;
+    pointer-events: auto;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateY(12px); } }
+
+  /* Share modal */
+  .share-link-box {
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    word-break: break-all;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .copy-btn {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .copy-btn:active { opacity: 0.8; }
+
+  /* Edit modal specific */
+  #edit-modal { z-index: 102; }
+  #edit-backdrop { z-index: 101; }
+  #share-modal { z-index: 103; }
+  #share-backdrop { z-index: 102; }
 </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
 <div class="login-screen hidden" id="login-screen">
   <div class="login-card">
-    <div class="login-icon">✓</div>
-    <h1 class="login-title">ToDoリスト</h1>
-    <p class="login-subtitle">タスクを管理するために<br>Googleアカウントでログインしてください</p>
+    <div class="login-icon">笨・/div>
+    <h1 class="login-title">ToDo繝ｪ繧ｹ繝・/h1>
+    <p class="login-subtitle">繧ｿ繧ｹ繧ｯ繧堤ｮ｡逅・☆繧九◆繧√↓<br>Google繧｢繧ｫ繧ｦ繝ｳ繝医〒繝ｭ繧ｰ繧､繝ｳ縺励※縺上□縺輔＞</p>
     <button class="google-btn" id="google-btn">
       <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
         <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
@@ -677,81 +624,167 @@
         <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
         <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
       </svg>
-      Googleでログイン
+      Google縺ｧ繝ｭ繧ｰ繧､繝ｳ
     </button>
     <div class="login-error hidden" id="login-error"></div>
   </div>
 </div>
 
+<!-- MAIN APP -->
 <div class="app hidden" id="app">
   <header>
     <div class="header-top">
       <div class="title-group">
-        <span class="header-icon">✓</span>
-        <h1>ToDoリスト</h1>
+        <span class="header-icon">笨・/span>
+        <h1>ToDo繝ｪ繧ｹ繝・/h1>
       </div>
       <div class="user-menu">
+        <button class="notif-btn" id="notif-btn" title="騾夂衍險ｭ螳・>粕</button>
         <img class="user-avatar" id="user-avatar" alt="">
-        <button class="logout-btn" id="logout-btn" aria-label="ログアウト" title="ログアウト">⎋</button>
+        <button class="logout-btn" id="logout-btn" aria-label="繝ｭ繧ｰ繧｢繧ｦ繝・ title="繝ｭ繧ｰ繧｢繧ｦ繝・>竡・/button>
       </div>
     </div>
-    <div class="counter" id="counter">タスクはまだありません</div>
+    <div class="counter" id="counter">繧ｿ繧ｹ繧ｯ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ</div>
   </header>
 
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all">すべて</button>
-    <button class="filter-btn" data-filter="active">未完了</button>
-    <button class="filter-btn" data-filter="done">完了</button>
+  <div id="share-banner" class="share-banner hidden">
+    <span id="share-banner-text">搭 蜈ｱ譛峨Μ繧ｹ繝・/span>
+    <button id="leave-share-btn">騾蜃ｺ</button>
+  </div>
+
+  <div class="filter-area">
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">縺吶∋縺ｦ</button>
+      <button class="filter-btn" data-filter="active">譛ｪ螳御ｺ・/button>
+      <button class="filter-btn" data-filter="done">螳御ｺ・/button>
+    </div>
+    <div class="category-filters" id="category-filters">
+      <!-- dynamically filled -->
+    </div>
+    <div class="sort-bar">
+      <span class="sort-label">荳ｦ縺ｹ譖ｿ縺・</span>
+      <select class="sort-select" id="sort-select">
+        <option value="manual">謇句虚・医ラ繝ｩ繝・げ・・/option>
+        <option value="priority">蜆ｪ蜈亥ｺｦ</option>
+        <option value="dueDate">譛滄剞譌･</option>
+        <option value="createdAt">菴懈・譌･</option>
+      </select>
+    </div>
   </div>
 
   <ul id="task-list"></ul>
 </div>
 
-<button class="fab hidden" id="fab" aria-label="タスクを追加">+</button>
+<!-- FAB -->
+<button class="fab hidden" id="fab" aria-label="繧ｿ繧ｹ繧ｯ繧定ｿｽ蜉">+</button>
 
+<!-- ADD MODAL -->
 <div class="modal-backdrop" id="modal-backdrop"></div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
   <div class="modal-handle"></div>
   <div class="modal-header">
-    <h2 id="modal-title">新しいタスク</h2>
+    <h2 id="modal-title">譁ｰ縺励＞繧ｿ繧ｹ繧ｯ</h2>
   </div>
   <form id="modal-form" class="modal-body">
     <label class="field">
-      <span class="field-label">タスク名</span>
-      <input type="text" id="task-input" placeholder="何をしますか？" autocomplete="off" maxlength="200" required>
+      <span class="field-label">繧ｿ繧ｹ繧ｯ蜷・/span>
+      <input type="text" id="task-input" placeholder="菴輔ｒ縺励∪縺吶°・・ autocomplete="off" maxlength="200" required>
     </label>
     <label class="field">
-      <span class="field-label">期限日（任意）</span>
+      <span class="field-label">譛滄剞譌･・井ｻｻ諢擾ｼ・/span>
       <input type="date" id="due-date-input">
     </label>
+    <div class="field">
+      <span class="field-label">蜆ｪ蜈亥ｺｦ</span>
+      <div class="priority-group" id="priority-group">
+        <button type="button" class="priority-btn" data-priority="high">閥 鬮・/button>
+        <button type="button" class="priority-btn selected" data-priority="mid">泯 荳ｭ</button>
+        <button type="button" class="priority-btn" data-priority="low">泙 菴・/button>
+      </div>
+    </div>
+    <label class="field">
+      <span class="field-label">繧ｫ繝・ざ繝ｪ・井ｻｻ諢擾ｼ・/span>
+      <input type="text" id="category-input" placeholder="莉穂ｺ九・蛟倶ｺｺ繝ｻ雋ｷ縺・黄 縺ｪ縺ｩ" maxlength="30">
+    </label>
     <div class="modal-actions">
-      <button type="button" class="btn btn-secondary" id="modal-cancel">キャンセル</button>
-      <button type="submit" class="btn btn-primary" id="modal-submit">追加</button>
+      <button type="button" class="btn btn-secondary" id="modal-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+      <button type="submit" class="btn btn-primary" id="modal-submit">霑ｽ蜉</button>
     </div>
   </form>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-backdrop" id="edit-backdrop"></div>
+<div class="modal" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" aria-hidden="true">
+  <div class="modal-handle"></div>
+  <div class="modal-header">
+    <h2 id="edit-modal-title">繧ｿ繧ｹ繧ｯ繧堤ｷｨ髮・/h2>
+  </div>
+  <form id="edit-form" class="modal-body">
+    <input type="hidden" id="edit-task-id">
+    <label class="field">
+      <span class="field-label">繧ｿ繧ｹ繧ｯ蜷・/span>
+      <input type="text" id="edit-task-input" autocomplete="off" maxlength="200" required>
+    </label>
+    <label class="field">
+      <span class="field-label">譛滄剞譌･・井ｻｻ諢擾ｼ・/span>
+      <input type="date" id="edit-due-date-input">
+    </label>
+    <div class="field">
+      <span class="field-label">蜆ｪ蜈亥ｺｦ</span>
+      <div class="priority-group" id="edit-priority-group">
+        <button type="button" class="priority-btn" data-priority="high">閥 鬮・/button>
+        <button type="button" class="priority-btn selected" data-priority="mid">泯 荳ｭ</button>
+        <button type="button" class="priority-btn" data-priority="low">泙 菴・/button>
+      </div>
+    </div>
+    <label class="field">
+      <span class="field-label">繧ｫ繝・ざ繝ｪ・井ｻｻ諢擾ｼ・/span>
+      <input type="text" id="edit-category-input" placeholder="莉穂ｺ九・蛟倶ｺｺ繝ｻ雋ｷ縺・黄 縺ｪ縺ｩ" maxlength="30">
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" id="edit-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+      <button type="submit" class="btn btn-primary">菫晏ｭ・/button>
+    </div>
+  </form>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-backdrop" id="share-backdrop"></div>
+<div class="modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" aria-hidden="true">
+  <div class="modal-handle"></div>
+  <div class="modal-header">
+    <h2 id="share-modal-title">搭 蜈ｱ譛峨Μ繧ｹ繝・/h2>
+  </div>
+  <div class="modal-body" id="share-modal-body">
+    <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・縺吶ｋ縺ｨ縲∵魚蠕・Μ繝ｳ繧ｯ繧貞女縺大叙縺｣縺滉ｺｺ縺悟酔縺倥ち繧ｹ繧ｯ繝ｪ繧ｹ繝医ｒ隕九※邱ｨ髮・〒縺阪∪縺吶・/p>
+    <label class="field">
+      <span class="field-label">繝ｪ繧ｹ繝亥錐</span>
+      <input type="text" id="share-list-name" placeholder="萓・ 螳ｶ譌上・雋ｷ縺・黄繝ｪ繧ｹ繝・ maxlength="50">
+    </label>
+    <div id="share-link-area" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
+      <span class="field-label">諡帛ｾ・Μ繝ｳ繧ｯ</span>
+      <div class="share-link-box" id="share-link-text"></div>
+      <button class="copy-btn" id="copy-link-btn">搭 繝ｪ繝ｳ繧ｯ繧偵さ繝斐・</button>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" id="share-cancel">髢峨§繧・/button>
+      <button type="button" class="btn btn-primary" id="create-share-btn">蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import {
-    getFirestore,
-    collection,
-    addDoc,
-    deleteDoc,
-    updateDoc,
-    doc,
-    onSnapshot,
-    query,
-    where,
-    orderBy,
-    serverTimestamp
+    getFirestore, collection, addDoc, deleteDoc, updateDoc, doc,
+    onSnapshot, query, where, orderBy, serverTimestamp, setDoc, getDoc
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -768,76 +801,104 @@
   const auth = getAuth(firebaseApp);
   const provider = new GoogleAuthProvider();
   const tasksCol = collection(db, "tasks");
+  const sharedListsCol = collection(db, "sharedLists");
 
-  const appEl = document.getElementById("app");
-  const loginScreen = document.getElementById("login-screen");
-  const loginError = document.getElementById("login-error");
-  const googleBtn = document.getElementById("google-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-  const userAvatar = document.getElementById("user-avatar");
-  const modalForm = document.getElementById("modal-form");
-  const input = document.getElementById("task-input");
-  const dueDateInput = document.getElementById("due-date-input");
-  const list = document.getElementById("task-list");
-  const counter = document.getElementById("counter");
-  const filterBtns = document.querySelectorAll(".filter-btn");
-  const fab = document.getElementById("fab");
-  const modal = document.getElementById("modal");
+  // ===== DOM REFS =====
+  const appEl         = document.getElementById("app");
+  const loginScreen   = document.getElementById("login-screen");
+  const loginError    = document.getElementById("login-error");
+  const googleBtn     = document.getElementById("google-btn");
+  const logoutBtn     = document.getElementById("logout-btn");
+  const userAvatar    = document.getElementById("user-avatar");
+  const notifBtn      = document.getElementById("notif-btn");
+  const modalForm     = document.getElementById("modal-form");
+  const input         = document.getElementById("task-input");
+  const dueDateInput  = document.getElementById("due-date-input");
+  const catInput      = document.getElementById("category-input");
+  const list          = document.getElementById("task-list");
+  const counter       = document.getElementById("counter");
+  const filterBtns    = document.querySelectorAll(".filter-btn");
+  const fab           = document.getElementById("fab");
+  const modal         = document.getElementById("modal");
   const modalBackdrop = document.getElementById("modal-backdrop");
-  const modalCancel = document.getElementById("modal-cancel");
+  const modalCancel   = document.getElementById("modal-cancel");
+  const catFilters    = document.getElementById("category-filters");
+  const sortSelect    = document.getElementById("sort-select");
 
+  // Edit modal
+  const editBackdrop    = document.getElementById("edit-backdrop");
+  const editModal       = document.getElementById("edit-modal");
+  const editForm        = document.getElementById("edit-form");
+  const editTaskId      = document.getElementById("edit-task-id");
+  const editTaskInput   = document.getElementById("edit-task-input");
+  const editDueDateInput= document.getElementById("edit-due-date-input");
+  const editCatInput    = document.getElementById("edit-category-input");
+  const editCancel      = document.getElementById("edit-cancel");
+  const editPriorityGroup = document.getElementById("edit-priority-group");
+
+  // Share modal
+  const shareBackdrop   = document.getElementById("share-backdrop");
+  const shareModal      = document.getElementById("share-modal");
+  const shareCancel     = document.getElementById("share-cancel");
+  const shareListName   = document.getElementById("share-list-name");
+  const createShareBtn  = document.getElementById("create-share-btn");
+  const shareLinkArea   = document.getElementById("share-link-area");
+  const shareLinkText   = document.getElementById("share-link-text");
+  const copyLinkBtn     = document.getElementById("copy-link-btn");
+  const shareBanner     = document.getElementById("share-banner");
+  const shareBannerText = document.getElementById("share-banner-text");
+  const leaveShareBtn   = document.getElementById("leave-share-btn");
+
+  // ===== STATE =====
   let tasks = [];
   let filter = "all";
+  let categoryFilter = "all";
+  let sortMode = "manual";
   let loaded = false;
   let currentUser = null;
   let unsubscribeTasks = null;
+  let currentSharedListId = null; // if viewing a shared list
+  let dragSrcId = null;
+  let notifGranted = false;
+  let notifTimers = {};
 
-  function subscribeTasks(uid) {
-    if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
-    loaded = false;
-    tasks = [];
-    render();
-    const q = query(tasksCol, where("userId", "==", uid), orderBy("createdAt", "desc"));
-    unsubscribeTasks = onSnapshot(q, snapshot => {
-      tasks = snapshot.docs.map(d => {
-        const data = d.data();
-        return {
-          id: d.id,
-          text: data.text,
-          done: !!data.done,
-          dueDate: data.dueDate || null
-        };
+  // ===== PRIORITY SELECTOR =====
+  function setupPriorityGroup(groupEl) {
+    groupEl.querySelectorAll(".priority-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        groupEl.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
       });
-      loaded = true;
-      render();
-    }, err => {
-      console.error("Firestore listen error:", err);
-      counter.textContent = "接続エラー: " + err.message;
     });
   }
+  function getSelectedPriority(groupEl) {
+    const sel = groupEl.querySelector(".priority-btn.selected");
+    return sel ? sel.dataset.priority : "mid";
+  }
+  function setSelectedPriority(groupEl, priority) {
+    groupEl.querySelectorAll(".priority-btn").forEach(b => b.classList.remove("selected"));
+    const target = groupEl.querySelector(`.priority-btn[data-priority="${priority}"]`);
+    if (target) target.classList.add("selected");
+  }
 
+  setupPriorityGroup(document.getElementById("priority-group"));
+  setupPriorityGroup(editPriorityGroup);
+
+  // ===== AUTH =====
   function showLogin(errorMsg) {
     loginScreen.classList.remove("hidden");
     appEl.classList.add("hidden");
     fab.classList.add("hidden");
-    if (errorMsg) {
-      loginError.textContent = errorMsg;
-      loginError.classList.remove("hidden");
-    } else {
-      loginError.classList.add("hidden");
-    }
+    if (errorMsg) { loginError.textContent = errorMsg; loginError.classList.remove("hidden"); }
+    else { loginError.classList.add("hidden"); }
   }
 
   function showApp(user) {
     loginScreen.classList.add("hidden");
     appEl.classList.remove("hidden");
     fab.classList.remove("hidden");
-    if (user.photoURL) {
-      userAvatar.src = user.photoURL;
-      userAvatar.style.display = "";
-    } else {
-      userAvatar.style.display = "none";
-    }
+    if (user.photoURL) { userAvatar.src = user.photoURL; userAvatar.style.display = ""; }
+    else { userAvatar.style.display = "none"; }
     userAvatar.alt = user.displayName || "";
   }
 
@@ -845,12 +906,26 @@
     if (user) {
       currentUser = user;
       showApp(user);
-      subscribeTasks(user.uid);
+      // Check URL for shared list
+      const urlParams = new URLSearchParams(location.search);
+      const sharedId = urlParams.get("share");
+      if (sharedId) {
+        joinSharedList(sharedId);
+      } else {
+        const saved = localStorage.getItem("currentSharedListId");
+        if (saved) {
+          subscribeSharedList(saved);
+        } else {
+          subscribeTasks(user.uid);
+        }
+      }
+      updateNotifBtn();
+      scheduleNotifications();
     } else {
       currentUser = null;
       if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
-      tasks = [];
-      loaded = false;
+      tasks = []; loaded = false;
+      currentSharedListId = null;
       showLogin();
     }
   });
@@ -861,9 +936,8 @@
     try {
       await signInWithPopup(auth, provider);
     } catch (err) {
-      console.error("ログインエラー:", err);
       if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
-        loginError.textContent = "ログインに失敗しました: " + (err.message || err.code);
+        loginError.textContent = "繝ｭ繧ｰ繧､繝ｳ縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + (err.message || err.code);
         loginError.classList.remove("hidden");
       }
     } finally {
@@ -872,18 +946,98 @@
   });
 
   logoutBtn.addEventListener("click", async () => {
-    if (!confirm("ログアウトしますか？")) return;
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error("ログアウトエラー:", err);
-    }
+    if (!confirm("繝ｭ繧ｰ繧｢繧ｦ繝医＠縺ｾ縺吶°・・)) return;
+    try { await signOut(auth); } catch (err) { console.error(err); }
   });
 
+  // ===== FIRESTORE SUBSCRIBE =====
+  function subscribeTasks(uid) {
+    if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+    loaded = false; tasks = []; render();
+    currentSharedListId = null;
+    shareBanner.classList.add("hidden");
+    localStorage.removeItem("currentSharedListId");
+
+    const q = query(tasksCol, where("userId", "==", uid), orderBy("createdAt", "desc"));
+    unsubscribeTasks = onSnapshot(q, snapshot => {
+      tasks = snapshot.docs.map(d => docToTask(d));
+      loaded = true;
+      render();
+      scheduleNotifications();
+    }, err => {
+      console.error("Firestore listen error:", err);
+      counter.textContent = "謗･邯壹お繝ｩ繝ｼ: " + err.message;
+    });
+  }
+
+  function subscribeSharedList(sharedListId) {
+    if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+    loaded = false; tasks = []; render();
+    currentSharedListId = sharedListId;
+    localStorage.setItem("currentSharedListId", sharedListId);
+
+    // load list meta
+    getDoc(doc(db, "sharedLists", sharedListId)).then(snap => {
+      if (snap.exists()) {
+        const name = snap.data().name || "蜈ｱ譛峨Μ繧ｹ繝・;
+        shareBannerText.textContent = "搭 " + name;
+        shareBanner.classList.remove("hidden");
+      }
+    });
+
+    const q = query(tasksCol, where("sharedListId", "==", sharedListId), orderBy("createdAt", "desc"));
+    unsubscribeTasks = onSnapshot(q, snapshot => {
+      tasks = snapshot.docs.map(d => docToTask(d));
+      loaded = true;
+      render();
+      scheduleNotifications();
+    }, err => {
+      console.error("Shared list error:", err);
+    });
+  }
+
+  function docToTask(d) {
+    const data = d.data();
+    return {
+      id: d.id,
+      text: data.text,
+      done: !!data.done,
+      dueDate: data.dueDate || null,
+      priority: data.priority || "mid",
+      category: data.category || "",
+      order: data.order ?? 0,
+      createdAt: data.createdAt,
+    };
+  }
+
+  // ===== SHARED LIST =====
+  async function joinSharedList(id) {
+    try {
+      const snap = await getDoc(doc(db, "sharedLists", id));
+      if (!snap.exists()) { showToast("笞・・蜈ｱ譛峨Μ繧ｹ繝医′隕九▽縺九ｊ縺ｾ縺帙ｓ"); subscribeTasks(currentUser.uid); return; }
+      // Add user to members
+      await updateDoc(doc(db, "sharedLists", id), {
+        [`members.${currentUser.uid}`]: currentUser.displayName || currentUser.email
+      });
+      subscribeSharedList(id);
+      showToast("笨・蜈ｱ譛峨Μ繧ｹ繝医↓蜿ょ刈縺励∪縺励◆");
+      // Clean up URL
+      history.replaceState({}, "", location.pathname);
+    } catch (err) {
+      console.error(err);
+      subscribeTasks(currentUser.uid);
+    }
+  }
+
+  leaveShareBtn.addEventListener("click", () => {
+    if (!confirm("蜈ｱ譛峨Μ繧ｹ繝医ｒ騾蜃ｺ縺励∪縺吶°・溯・蛻・・繧ｿ繧ｹ繧ｯ繝ｪ繧ｹ繝医↓謌ｻ繧翫∪縺吶・)) return;
+    subscribeTasks(currentUser.uid);
+  });
+
+  // ===== URGENCY / LABELS =====
   function getUrgency(dueDate) {
     if (!dueDate) return null;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0,0,0,0);
     const due = new Date(dueDate + "T00:00:00");
     if (isNaN(due)) return null;
     const diffDays = Math.floor((due - today) / 86400000);
@@ -897,75 +1051,189 @@
     if (!dueDate) return "";
     const due = new Date(dueDate + "T00:00:00");
     if (isNaN(due)) return "";
-    const dateStr = `${due.getMonth() + 1}/${due.getDate()}`;
+    const dateStr = `${due.getMonth()+1}/${due.getDate()}`;
     const u = getUrgency(dueDate);
-    if (!u) return `📅 ${dateStr}`;
-    if (u.diff < 0) return `⚠️ ${dateStr} (${-u.diff}日超過)`;
-    if (u.diff === 0) return `⏰ ${dateStr} (今日)`;
-    if (u.diff === 1) return `📅 ${dateStr} (明日)`;
-    if (u.diff <= 7) return `📅 ${dateStr} (あと${u.diff}日)`;
-    return `📅 ${dateStr}`;
+    if (!u) return `套 ${dateStr}`;
+    if (u.diff < 0) return `笞・・${dateStr} (${-u.diff}譌･雜・℃)`;
+    if (u.diff === 0) return `竢ｰ ${dateStr} (莉頑律)`;
+    if (u.diff === 1) return `套 ${dateStr} (譏取律)`;
+    if (u.diff <= 7) return `套 ${dateStr} (縺ゅ→${u.diff}譌･)`;
+    return `套 ${dateStr}`;
   }
 
+  function priorityLabel(p) {
+    if (p === "high") return "鬮・;
+    if (p === "low") return "菴・;
+    return "荳ｭ";
+  }
+
+  // ===== SORT =====
+  function getSortedTasks(arr) {
+    const a = [...arr];
+    if (sortMode === "priority") {
+      const rank = { high: 0, mid: 1, low: 2 };
+      a.sort((x, y) => (rank[x.priority]??1) - (rank[y.priority]??1));
+    } else if (sortMode === "dueDate") {
+      a.sort((x, y) => {
+        if (!x.dueDate && !y.dueDate) return 0;
+        if (!x.dueDate) return 1;
+        if (!y.dueDate) return -1;
+        return x.dueDate.localeCompare(y.dueDate);
+      });
+    } else if (sortMode === "createdAt") {
+      a.sort((x, y) => {
+        const tx = x.createdAt?.seconds ?? 0;
+        const ty = y.createdAt?.seconds ?? 0;
+        return ty - tx;
+      });
+    } else {
+      // manual order
+      a.sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
+    }
+    return a;
+  }
+
+  // ===== CATEGORIES =====
+  function getCategories() {
+    const cats = new Set();
+    tasks.forEach(t => { if (t.category) cats.add(t.category); });
+    return [...cats].sort();
+  }
+
+  function renderCategoryFilters() {
+    const cats = getCategories();
+    catFilters.innerHTML = "";
+    if (cats.length === 0) { catFilters.classList.add("hidden"); return; }
+    catFilters.classList.remove("hidden");
+
+    const allChip = document.createElement("button");
+    allChip.className = "cat-chip" + (categoryFilter === "all" ? " active" : "");
+    allChip.textContent = "捷 縺吶∋縺ｦ";
+    allChip.addEventListener("click", () => { categoryFilter = "all"; render(); });
+    catFilters.appendChild(allChip);
+
+    cats.forEach(cat => {
+      const chip = document.createElement("button");
+      chip.className = "cat-chip" + (categoryFilter === cat ? " active" : "");
+      chip.textContent = cat;
+      chip.addEventListener("click", () => { categoryFilter = cat; render(); });
+      catFilters.appendChild(chip);
+    });
+  }
+
+  // ===== RENDER =====
   function render() {
-    const filtered = tasks.filter(t => {
-      if (filter === "active") return !t.done;
-      if (filter === "done") return t.done;
+    renderCategoryFilters();
+
+    let filtered = tasks.filter(t => {
+      if (filter === "active" && t.done) return false;
+      if (filter === "done" && !t.done) return false;
+      if (categoryFilter !== "all" && t.category !== categoryFilter) return false;
       return true;
     });
 
+    filtered = getSortedTasks(filtered);
     list.innerHTML = "";
 
     if (filtered.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty";
-      const msg = !loaded ? "読み込み中..."
-                : filter === "done" ? "完了したタスクはありません"
-                : filter === "active" ? "未完了のタスクはありません"
-                : "タスクを追加してみましょう";
-      empty.innerHTML = `<div class="icon">📝</div>${msg}`;
+      const msg = !loaded ? "隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ..."
+                : filter === "done" ? "螳御ｺ・＠縺溘ち繧ｹ繧ｯ縺ｯ縺ゅｊ縺ｾ縺帙ｓ"
+                : filter === "active" ? "譛ｪ螳御ｺ・・繧ｿ繧ｹ繧ｯ縺ｯ縺ゅｊ縺ｾ縺帙ｓ"
+                : "繧ｿ繧ｹ繧ｯ繧定ｿｽ蜉縺励※縺ｿ縺ｾ縺励ｇ縺・;
+      empty.innerHTML = `<div class="icon">統</div>${msg}`;
       list.appendChild(empty);
     } else {
       filtered.forEach(task => {
-        const li = document.createElement("li");
-        const urgency = getUrgency(task.dueDate);
-        const urgencyCls = !task.done && urgency && urgency.cls ? " " + urgency.cls : "";
-        li.className = "task" + (task.done ? " done" : "") + urgencyCls;
-        li.dataset.id = task.id;
-
-        const checkbox = document.createElement("div");
-        checkbox.className = "checkbox";
-        checkbox.setAttribute("role", "checkbox");
-        checkbox.setAttribute("aria-checked", task.done);
-        checkbox.addEventListener("click", () => toggleTask(task.id, task.done));
-
-        const main = document.createElement("div");
-        main.className = "task-main";
-
-        const text = document.createElement("div");
-        text.className = "task-text";
-        text.textContent = task.text;
-        main.appendChild(text);
-
-        if (task.dueDate) {
-          const badge = document.createElement("span");
-          badge.className = "due-badge";
-          badge.textContent = formatDueLabel(task.dueDate);
-          main.appendChild(badge);
-        }
-
-        const delBtn = document.createElement("button");
-        delBtn.className = "delete-btn";
-        delBtn.setAttribute("aria-label", "削除");
-        delBtn.textContent = "×";
-        delBtn.addEventListener("click", () => deleteTask(task.id, li));
-
-        li.append(checkbox, main, delBtn);
+        const li = buildTaskEl(task);
         list.appendChild(li);
       });
     }
 
     updateCounter();
+  }
+
+  function buildTaskEl(task) {
+    const li = document.createElement("li");
+    const urgency = getUrgency(task.dueDate);
+    const urgencyCls = !task.done && urgency && urgency.cls ? " " + urgency.cls : "";
+    li.className = "task" + (task.done ? " done" : "") + urgencyCls;
+    li.dataset.id = task.id;
+    li.dataset.priority = task.priority || "mid";
+
+    // Drag handle
+    const handle = document.createElement("div");
+    handle.className = "drag-handle";
+    handle.innerHTML = "笄ｿ";
+    handle.title = "繝峨Λ繝・げ縺励※荳ｦ縺ｹ譖ｿ縺・;
+
+    // Checkbox
+    const checkbox = document.createElement("div");
+    checkbox.className = "checkbox";
+    checkbox.setAttribute("role", "checkbox");
+    checkbox.setAttribute("aria-checked", task.done);
+    checkbox.addEventListener("click", () => toggleTask(task.id, task.done));
+
+    // Main
+    const main = document.createElement("div");
+    main.className = "task-main";
+
+    const text = document.createElement("div");
+    text.className = "task-text";
+    text.textContent = task.text;
+    text.title = "繧ｯ繝ｪ繝・け縺ｧ邱ｨ髮・;
+    text.addEventListener("click", () => openEditModal(task));
+    main.appendChild(text);
+
+    // Meta row (priority, category, due)
+    const meta = document.createElement("div");
+    meta.className = "task-meta-row";
+
+    if (task.priority && task.priority !== "mid") {
+      const pb = document.createElement("span");
+      pb.className = `priority-badge ${task.priority}`;
+      pb.textContent = priorityLabel(task.priority);
+      meta.appendChild(pb);
+    }
+    if (task.category) {
+      const cb = document.createElement("span");
+      cb.className = "category-badge";
+      cb.textContent = task.category;
+      meta.appendChild(cb);
+    }
+    if (task.dueDate) {
+      const badge = document.createElement("span");
+      badge.className = "due-badge";
+      badge.textContent = formatDueLabel(task.dueDate);
+      meta.appendChild(badge);
+    }
+    if (meta.children.length > 0) main.appendChild(meta);
+
+    // Actions
+    const actions = document.createElement("div");
+    actions.className = "task-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "icon-btn edit-btn";
+    editBtn.setAttribute("aria-label", "邱ｨ髮・);
+    editBtn.innerHTML = "笨擾ｸ・;
+    editBtn.addEventListener("click", () => openEditModal(task));
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "icon-btn delete-btn";
+    delBtn.setAttribute("aria-label", "蜑企勁");
+    delBtn.innerHTML = "卵";
+    delBtn.addEventListener("click", () => deleteTask(task.id, li));
+
+    actions.append(editBtn, delBtn);
+
+    li.append(handle, checkbox, main, actions);
+
+    // Drag and drop
+    setupDrag(li, task.id);
+
+    return li;
   }
 
   function updateCounter() {
@@ -977,32 +1245,49 @@
       return u && u.cls === "overdue";
     }).length;
     if (total === 0) {
-      counter.textContent = loaded ? "タスクはまだありません" : "読み込み中...";
+      counter.textContent = loaded ? "繧ｿ繧ｹ繧ｯ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ" : "隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...";
     } else {
-      let msg = `残り ${remaining} 件 / 全 ${total} 件`;
-      if (overdue > 0) msg += ` ⚠️ 期限超過 ${overdue} 件`;
+      let msg = `谿九ｊ ${remaining} 莉ｶ / 蜈ｨ ${total} 莉ｶ`;
+      if (overdue > 0) msg += ` 笞・・譛滄剞雜・℃ ${overdue} 莉ｶ`;
       counter.textContent = msg;
     }
   }
 
-  async function addTask(text, dueDate) {
+  // ===== CRUD =====
+  async function addTask(text, dueDate, priority, category) {
     const trimmed = text.trim();
-    if (!trimmed) return;
-    if (!currentUser) {
-      alert("ログインが必要です");
-      return;
-    }
+    if (!trimmed || !currentUser) return;
+    const maxOrder = tasks.reduce((m, t) => Math.max(m, t.order ?? 0), -1);
     try {
-      await addDoc(tasksCol, {
+      const data = {
         text: trimmed,
         done: false,
         dueDate: dueDate || null,
+        priority: priority || "mid",
+        category: category.trim() || "",
         userId: currentUser.uid,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        order: maxOrder + 1,
+      };
+      if (currentSharedListId) data.sharedListId = currentSharedListId;
+      await addDoc(tasksCol, data);
+    } catch (err) {
+      console.error("霑ｽ蜉繧ｨ繝ｩ繝ｼ:", err);
+      alert("繧ｿ繧ｹ繧ｯ縺ｮ霑ｽ蜉縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
+    }
+  }
+
+  async function editTask(id, text, dueDate, priority, category) {
+    try {
+      await updateDoc(doc(db, "tasks", id), {
+        text: text.trim(),
+        dueDate: dueDate || null,
+        priority: priority || "mid",
+        category: category.trim() || "",
       });
     } catch (err) {
-      console.error("追加エラー:", err);
-      alert("タスクの追加に失敗しました: " + err.message);
+      console.error("邱ｨ髮・お繝ｩ繝ｼ:", err);
+      alert("繧ｿ繧ｹ繧ｯ縺ｮ譖ｴ譁ｰ縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
     }
   }
 
@@ -1010,7 +1295,7 @@
     try {
       await updateDoc(doc(db, "tasks", id), { done: !currentDone });
     } catch (err) {
-      console.error("更新エラー:", err);
+      console.error("譖ｴ譁ｰ繧ｨ繝ｩ繝ｼ:", err);
     }
   }
 
@@ -1020,12 +1305,92 @@
       try {
         await deleteDoc(doc(db, "tasks", id));
       } catch (err) {
-        console.error("削除エラー:", err);
+        console.error("蜑企勁繧ｨ繝ｩ繝ｼ:", err);
         el.classList.remove("removing");
       }
     }, 180);
   }
 
+  // ===== DRAG AND DROP =====
+  let touchDragTask = null;
+  let touchClone = null;
+  let touchStartY = 0;
+
+  function setupDrag(li, id) {
+    // Desktop drag
+    li.setAttribute("draggable", "true");
+    li.addEventListener("dragstart", e => {
+      dragSrcId = id;
+      li.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    li.addEventListener("dragend", () => { li.classList.remove("dragging"); document.querySelectorAll(".task").forEach(t => t.classList.remove("drag-over")); });
+    li.addEventListener("dragover", e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; li.classList.add("drag-over"); });
+    li.addEventListener("dragleave", () => li.classList.remove("drag-over"));
+    li.addEventListener("drop", async e => {
+      e.preventDefault();
+      li.classList.remove("drag-over");
+      if (dragSrcId && dragSrcId !== id) {
+        await reorderTasks(dragSrcId, id);
+      }
+    });
+
+    // Touch drag (handle only)
+    const handle = li.querySelector(".drag-handle");
+    handle.addEventListener("touchstart", e => {
+      touchDragTask = li;
+      touchStartY = e.touches[0].clientY;
+      li.classList.add("dragging");
+    }, { passive: true });
+
+    handle.addEventListener("touchmove", e => {
+      if (!touchDragTask) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (el) {
+        const targetLi = el.closest("li.task");
+        if (targetLi && targetLi !== touchDragTask) {
+          document.querySelectorAll(".task").forEach(t => t.classList.remove("drag-over"));
+          targetLi.classList.add("drag-over");
+        }
+      }
+    }, { passive: false });
+
+    handle.addEventListener("touchend", async e => {
+      if (!touchDragTask) return;
+      touchDragTask.classList.remove("dragging");
+      const overEl = document.querySelector(".task.drag-over");
+      if (overEl) {
+        overEl.classList.remove("drag-over");
+        const srcId = touchDragTask.dataset.id;
+        const dstId = overEl.dataset.id;
+        if (srcId !== dstId) await reorderTasks(srcId, dstId);
+      }
+      touchDragTask = null;
+    });
+  }
+
+  async function reorderTasks(srcId, dstId) {
+    const allSorted = getSortedTasks(tasks);
+    const srcIdx = allSorted.findIndex(t => t.id === srcId);
+    const dstIdx = allSorted.findIndex(t => t.id === dstId);
+    if (srcIdx === -1 || dstIdx === -1) return;
+    const reordered = [...allSorted];
+    const [moved] = reordered.splice(srcIdx, 1);
+    reordered.splice(dstIdx, 0, moved);
+    // Update order field for all tasks
+    const updates = reordered.map((t, i) => updateDoc(doc(db, "tasks", t.id), { order: i }));
+    try {
+      await Promise.all(updates);
+    } catch (err) {
+      console.error("荳ｦ縺ｹ譖ｿ縺医お繝ｩ繝ｼ:", err);
+    }
+  }
+
+  sortSelect.addEventListener("change", () => { sortMode = sortSelect.value; render(); });
+
+  // ===== ADD MODAL =====
   function openModal() {
     modal.classList.add("open");
     modalBackdrop.classList.add("open");
@@ -1041,6 +1406,8 @@
     modal.setAttribute("aria-hidden", "true");
     input.value = "";
     dueDateInput.value = "";
+    catInput.value = "";
+    setSelectedPriority(document.getElementById("priority-group"), "mid");
     if (document.activeElement) document.activeElement.blur();
   }
 
@@ -1048,17 +1415,56 @@
   modalBackdrop.addEventListener("click", closeModal);
   modalCancel.addEventListener("click", closeModal);
 
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-  });
-
   modalForm.addEventListener("submit", e => {
     e.preventDefault();
     if (!input.value.trim()) return;
-    addTask(input.value, dueDateInput.value);
+    const priority = getSelectedPriority(document.getElementById("priority-group"));
+    addTask(input.value, dueDateInput.value, priority, catInput.value);
     closeModal();
   });
 
+  // ===== EDIT MODAL =====
+  function openEditModal(task) {
+    editTaskId.value = task.id;
+    editTaskInput.value = task.text;
+    editDueDateInput.value = task.dueDate || "";
+    editCatInput.value = task.category || "";
+    setSelectedPriority(editPriorityGroup, task.priority || "mid");
+    editModal.classList.add("open");
+    editBackdrop.classList.add("open");
+    document.body.classList.add("modal-open");
+    editModal.setAttribute("aria-hidden", "false");
+    setTimeout(() => editTaskInput.focus(), 320);
+  }
+
+  function closeEditModal() {
+    editModal.classList.remove("open");
+    editBackdrop.classList.remove("open");
+    document.body.classList.remove("modal-open");
+    editModal.setAttribute("aria-hidden", "true");
+    if (document.activeElement) document.activeElement.blur();
+  }
+
+  editBackdrop.addEventListener("click", closeEditModal);
+  editCancel.addEventListener("click", closeEditModal);
+
+  editForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = editTaskId.value;
+    const priority = getSelectedPriority(editPriorityGroup);
+    await editTask(id, editTaskInput.value, editDueDateInput.value, priority, editCatInput.value);
+    closeEditModal();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      if (shareModal.classList.contains("open")) closeShareModal();
+      else if (editModal.classList.contains("open")) closeEditModal();
+      else if (modal.classList.contains("open")) closeModal();
+    }
+  });
+
+  // ===== FILTER =====
   filterBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       filterBtns.forEach(b => b.classList.remove("active"));
@@ -1067,6 +1473,138 @@
       render();
     });
   });
+
+  // ===== SHARE MODAL =====
+  // Trigger share from header share button (reuse notif area) - add share icon to actions
+  // Open from FAB long press or from a separate button. Let's add a share button in the header.
+  // We'll open it programmatically. A "Share" option in a small menu would be ideal,
+  // but for simplicity, let's add a 迫 button next to the notif button.
+  // The share modal is opened via openShareModal() which we call from a button we inject.
+
+  const shareHeaderBtn = document.createElement("button");
+  shareHeaderBtn.className = "notif-btn";
+  shareHeaderBtn.title = "蜈ｱ譛峨Μ繧ｹ繝・;
+  shareHeaderBtn.innerHTML = "迫";
+  shareHeaderBtn.addEventListener("click", openShareModal);
+  document.querySelector(".user-menu").insertBefore(shareHeaderBtn, notifBtn);
+
+  function openShareModal() {
+    shareLinkArea.classList.add("hidden");
+    shareListName.value = "";
+    shareModal.classList.add("open");
+    shareBackdrop.classList.add("open");
+    document.body.classList.add("modal-open");
+    shareModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeShareModal() {
+    shareModal.classList.remove("open");
+    shareBackdrop.classList.remove("open");
+    document.body.classList.remove("modal-open");
+    shareModal.setAttribute("aria-hidden", "true");
+  }
+
+  shareBackdrop.addEventListener("click", closeShareModal);
+  shareCancel.addEventListener("click", closeShareModal);
+
+  createShareBtn.addEventListener("click", async () => {
+    if (!currentUser) return;
+    const name = shareListName.value.trim() || "蜈ｱ譛峨Μ繧ｹ繝・;
+    try {
+      createShareBtn.disabled = true;
+      createShareBtn.textContent = "菴懈・荳ｭ...";
+      const ref = await addDoc(sharedListsCol, {
+        name,
+        createdBy: currentUser.uid,
+        createdAt: serverTimestamp(),
+        members: { [currentUser.uid]: currentUser.displayName || currentUser.email }
+      });
+      const link = `${location.origin}${location.pathname}?share=${ref.id}`;
+      shareLinkText.textContent = link;
+      shareLinkArea.classList.remove("hidden");
+      shareLinkArea.style.display = "flex";
+      showToast("笨・蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・縺励∪縺励◆");
+    } catch (err) {
+      console.error(err);
+      alert("蜈ｱ譛峨Μ繧ｹ繝医・菴懈・縺ｫ螟ｱ謨励＠縺ｾ縺励◆: " + err.message);
+    } finally {
+      createShareBtn.disabled = false;
+      createShareBtn.textContent = "蜈ｱ譛峨Μ繧ｹ繝医ｒ菴懈・";
+    }
+  });
+
+  copyLinkBtn.addEventListener("click", async () => {
+    const link = shareLinkText.textContent;
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast("搭 繝ｪ繝ｳ繧ｯ繧偵さ繝斐・縺励∪縺励◆");
+    } catch {
+      prompt("莉･荳九・繝ｪ繝ｳ繧ｯ繧偵さ繝斐・縺励※縺上□縺輔＞:", link);
+    }
+  });
+
+  // ===== NOTIFICATIONS =====
+  async function requestNotifPermission() {
+    if (!("Notification" in window)) { showToast("笞・・縺薙・繝悶Λ繧ｦ繧ｶ縺ｯ騾夂衍縺ｫ蟇ｾ蠢懊＠縺ｦ縺・∪縺帙ｓ"); return; }
+    if (Notification.permission === "granted") {
+      showToast("粕 騾夂衍縺ｯ縺吶〒縺ｫ險ｱ蜿ｯ縺輔ｌ縺ｦ縺・∪縺・);
+      return;
+    }
+    const result = await Notification.requestPermission();
+    notifGranted = result === "granted";
+    updateNotifBtn();
+    if (notifGranted) {
+      showToast("笨・騾夂衍繧定ｨｱ蜿ｯ縺励∪縺励◆");
+      scheduleNotifications();
+    } else {
+      showToast("舶 騾夂衍縺梧拠蜷ｦ縺輔ｌ縺ｾ縺励◆");
+    }
+  }
+
+  function updateNotifBtn() {
+    const perm = typeof Notification !== "undefined" ? Notification.permission : "denied";
+    notifGranted = perm === "granted";
+    notifBtn.innerHTML = notifGranted ? "粕" : "舶";
+    notifBtn.title = notifGranted ? "騾夂衍繧ｪ繝ｳ" : "騾夂衍繧定ｨｱ蜿ｯ縺吶ｋ";
+    notifBtn.classList.toggle("denied", perm === "denied");
+  }
+
+  notifBtn.addEventListener("click", requestNotifPermission);
+
+  function scheduleNotifications() {
+    if (!notifGranted) return;
+    // Clear old timers
+    Object.values(notifTimers).forEach(clearTimeout);
+    notifTimers = {};
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    tasks.forEach(task => {
+      if (task.done || !task.dueDate) return;
+      const due = new Date(task.dueDate + "T09:00:00"); // remind at 9am on due day
+      const diff = due - Date.now();
+      if (diff > 0 && diff < 7 * 86400000) { // within 7 days
+        notifTimers[task.id] = setTimeout(() => {
+          if (Notification.permission === "granted") {
+            new Notification("竢ｰ 譛滄剞縺ｮ縺顔衍繧峨○", {
+              body: `縲・{task.text}縲阪・譛滄剞縺ｯ莉頑律縺ｧ縺兪,
+              icon: "/favicon.ico",
+              tag: task.id,
+            });
+          }
+        }, diff);
+      }
+    });
+  }
+
+  // ===== TOAST =====
+  function showToast(msg) {
+    const tc = document.getElementById("toast-container");
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    tc.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
 
   render();
 </script>
